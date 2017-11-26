@@ -17,4 +17,11 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::group(array('prefix' => 'admin'), function() {
+    Route::get('/', 'Admin\AdminController@index')->name('admin');
+    Route::resources([
+        'stories' => 'Admin\StoryController',
+        'acts' => 'Admin\ActController',
+        'characters' => 'Admin\CharacterController',
+    ]);
+});

@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\View;
+use App\Models\Story;
 
-class HomeController extends Controller
+class AdminController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -23,6 +26,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        return View::make('admin.index')
+            ->with('stories', Story::all());
     }
 }
