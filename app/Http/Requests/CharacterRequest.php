@@ -24,9 +24,13 @@ class CharacterRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required',
-            'begins' => 'required|date',
-            'copy' => 'required',
+            'guest' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'bio' => 'required',
+            'appearance' => 'required',
+            'story' => 'required',
+            'murder' => 'required',
         ];
     }
 }

@@ -46,11 +46,7 @@ class StoryController extends AdminController
      */
     public function store(StoryRequest $request)
     {
-        $story = Story::create([
-            'title' => $request->input('title'),
-            'begins' => $request->input('begins'),
-            'copy' => $request->input('copy'),
-        ]);
+        $story = Story::create($request->all());
 
         return $this->edit($story->id);
     }
@@ -91,11 +87,7 @@ class StoryController extends AdminController
      */
     public function update(StoryRequest $request, $id)
     {
-        Story::find($id)->update([
-            'title' => $request->input('title'),
-            'begins' => $request->input('begins'),
-            'copy' => $request->input('copy'),
-        ]);
+        Story::find($id)->update($request->all());
 
         return $this->edit($id);
     }
@@ -106,15 +98,17 @@ class StoryController extends AdminController
      * @param  App\Models\Story  $story
      * @param  string  $url
      * @param  string  $method
-     * @param  string  $button
+     * @param  string  $submit
      * @return \Illuminate\Http\Response
      */
-    private function editForm(Story $story, string $url, string $method, string $button) {
+    private function editForm(Story $story, string $url, string $method, string $submit) {
         return View::make('admin.story.edit')->with([
-            'story' => $story,
+            'resource_name' => 'Story',
+            'resource' => $story,
             'url' => $url,
             'method' => $method,
-            'button' => $button,
+            'submit' => $submit,
+            'prevent_destory' => true,
         ]);
     }
 }

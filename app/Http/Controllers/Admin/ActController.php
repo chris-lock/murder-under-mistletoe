@@ -19,7 +19,7 @@ class ActController extends AdminController
     {
         return View::make('admin.component.index')->with([
             'controller' => 'Act',
-            'resources' => Act::all()->sortBy('begins'),
+            'resources' => Act::all(),
             'columns' => [
                 'title',
                 'begins',
@@ -50,10 +50,7 @@ class ActController extends AdminController
      */
     public function store(ActRequest $request)
     {
-        $act = Act::create([
-            'title' => $request->input('title'),
-            'begins' => $request->input('begins'),
-        ]);
+        $act = Act::create($request->all());
 
         return $this->edit($act->id);
     }
@@ -83,10 +80,7 @@ class ActController extends AdminController
      */
     public function update(ActRequest $request, $id)
     {
-        Act::find($id)->update([
-            'title' => $request->input('title'),
-            'begins' => $request->input('begins'),
-        ]);
+        Act::find($id)->update($request->all());
 
         return $this->edit($id);
     }
@@ -110,15 +104,16 @@ class ActController extends AdminController
      * @param  App\Models\Act  $act
      * @param  string  $url
      * @param  string  $method
-     * @param  string  $action
+     * @param  string  $submit
      * @return \Illuminate\Http\Response
      */
-    private function editForm(Act $act, string $url, string $method, string $action) {
+    private function editForm(Act $act, string $url, string $method, string $submit) {
         return View::make('admin.act.edit')->with([
-            'act' => $act,
+            'resource_name' => 'Act',
+            'resource' => $act,
             'url' => $url,
             'method' => $method,
-            'action' => $action,
+            'submit' => $submit,
         ]);
     }
 }

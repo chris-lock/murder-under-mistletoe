@@ -17,6 +17,7 @@ class CreateCharactersTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->string('slug')->unique();
+            $table->string('guest');
             $table->string('first_name');
             $table->string('last_name');
             $table->text('bio');

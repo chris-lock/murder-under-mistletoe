@@ -15,6 +15,7 @@ class Character extends Model
      * @var array
      */
     protected $fillable = [
+        'guest',
         'first_name',
         'last_name',
         'bio',
@@ -52,7 +53,7 @@ class Character extends Model
      */
     public function relationships()
     {
-        return $this->hasMany('Models\Relationship');
+        return $this->hasMany('App\Models\Relationship');
     }
 
     /**
@@ -62,7 +63,7 @@ class Character extends Model
      */
     public function perspectives()
     {
-        return $this->hasMany('Models\Relationship', 'relationship_id', 'id');
+        return $this->hasMany('App\Models\Relationship', 'relationship_id', 'id');
     }
 
     /**
@@ -72,6 +73,6 @@ class Character extends Model
      */
     public function instructions()
     {
-        return $this->hasMany('Models\Instruction');
+        return $this->hasMany('App\Models\Instruction');
     }
 }

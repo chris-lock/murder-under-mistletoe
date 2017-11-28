@@ -21,8 +21,8 @@ class CreateRelationshipsTable extends Migration
             $table->integer('character_id')->unsigned()->index();
             $table->integer('relationship_id')->unsigned()->index();
 
-            $table->foreign('character_id')->references('id')->on('characters');
-            $table->foreign('relationship_id')->references('id')->on('characters');
+            $table->foreign('character_id')->references('id')->on('characters')->onDelete('cascade');;
+            $table->foreign('relationship_id')->references('id')->on('characters')->onDelete('cascade');;
         });
     }
 

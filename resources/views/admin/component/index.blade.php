@@ -19,8 +19,9 @@
                     <th>ID</th>
 
                     @foreach($columns as $column)
-                        <th>{{ ucfirst($column) }}</th>
+                        <th>{{ title_case(str_replace('_', ' ', $column)) }}</th>
                     @endforeach
+
                     <th>&nbsp;</th>
                 </tr>
             </thead>

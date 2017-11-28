@@ -23,8 +23,8 @@ class CreateInstructionsTable extends Migration
             $table->integer('character_id')->unsigned()->index();
             $table->integer('act_id')->unsigned()->index();
 
-            $table->foreign('character_id')->references('id')->on('characters');
-            $table->foreign('act_id')->references('id')->on('acts');
+            $table->foreign('character_id')->references('id')->on('characters')->onDelete('cascade');
+            $table->foreign('act_id')->references('id')->on('acts')->onDelete('cascade');
         });
     }
 

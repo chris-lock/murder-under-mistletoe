@@ -16,14 +16,4 @@ class Story extends Model
         'begins',
         'copy',
     ];
-
-    /**
-     * How things unfold.
-     *
-     * @return Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function acts()
-    {
-        return $this->hasMany('Models\Act');
-    }
 }

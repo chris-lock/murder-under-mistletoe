@@ -24,6 +24,6 @@ class Relationship extends Model
      */
     public function character()
     {
-        return $this->hasOne('Models\Character');
+        return $this->hasOne('App\Models\Character');
     }
 }

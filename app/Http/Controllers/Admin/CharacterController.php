@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Support\Facades\View;
 use App\Http\Requests\CharacterRequest;
 use App\Models\Character;
+use App\Models\Act;
 
 class CharacterController extends AdminController
 {
@@ -19,10 +20,11 @@ class CharacterController extends AdminController
     {
         return View::make('admin.component.index')->with([
             'controller' => 'Character',
-            'resources' => Character::all()->sortBy('begins'),
+            'resources' => Character::all(),
             'columns' => [
-                'title',
-                'begins',
+                'guest',
+                'first_name',
+                'last_name',
             ],
         ]);
     }
@@ -36,7 +38,7 @@ class CharacterController extends AdminController
     {
         return $this->editForm(
             new Character,
-            route('acts.store'),
+            route('characters.store'),
             'POST',
             'Create'
         );
@@ -50,10 +52,7 @@ class CharacterController extends AdminController
      */
     public function store(CharacterRequest $request)
     {
-        $character = Character::create([
-            'title' => $request->input('title'),
-            'begins' => $request->input('begins'),
-        ]);
+        $character = Character::create($request->all());
 
         return $this->edit($character->id);
     }
@@ -68,7 +67,7 @@ class CharacterController extends AdminController
     {
         return $this->editForm(
             Character::find($id),
-            route('acts.update', $id),
+            route('characters.update', $id),
             'PUT',
             'Update'
         );
@@ -83,10 +82,7 @@ class CharacterController extends AdminController
      */
     public function update(CharacterRequest $request, $id)
     {
-        Character::find($id)->update([
-            'title' => $request->input('title'),
-            'begins' => $request->input('begins'),
-        ]);
+        Character::find($id)->update($request->all());
 
         return $this->edit($id);
     }
@@ -101,7 +97,7 @@ class CharacterController extends AdminController
     {
         Character::find($id)->delete();
 
-        return redirect()->route('acts.index');
+        return redirect()->route('characters.index');
     }
 
     /**
@@ -110,15 +106,19 @@ class CharacterController extends AdminController
      * @param  App\Models\Character  $character
      * @param  string  $url
      * @param  string  $method
-     * @param  string  $action
+     * @param  string  $submit
      * @return \Illuminate\Http\Response
      */
-    private function editForm(Character $character, string $url, string $method, string $action) {
+    private function editForm(Character $character, string $url, string $method, string $submit) {
         return View::make('admin.character.edit')->with([
-            'character' => $character,
+            'resource_name' => 'Character',
+            'resource' => $character,
             'url' => $url,
             'method' => $method,
-            'action' => $action,
+            'submit' => $submit,
+            'acts' => Act::all(),
+            'instructions' => $character->instructions->groupBy('act_id'),
+            'relationships' => $character->instructions->groupBy('act_id'),
         ]);
     }
 }
