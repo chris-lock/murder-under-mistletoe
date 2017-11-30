@@ -61,7 +61,7 @@ class Character extends Model
      *
      * @return Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function perspectives()
+    public function perceptions()
     {
         return $this->hasMany('App\Models\Relationship', 'relationship_id', 'id');
     }

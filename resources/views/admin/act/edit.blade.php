@@ -1,6 +1,6 @@
-@extends('admin.component.edit')
+@extends('admin.admin')
 
-@section('form')
+@component('admin.component.edit')
     <div class="form-group">
         {{ Form::label('title', 'Title') }}
         {{ Form::text('title', $resource->title, array('class' => 'form-control')) }}
@@ -10,4 +10,4 @@
         {{ Form::label('begins', 'Begins') }}
         {{ Form::time('begins', $resource->begins, array('class' => 'form-control')) }}
     </div>
-@endsection
+@endcomponent

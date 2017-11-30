@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Support\Facades\View;
 use App\Http\Requests\StoryRequest;
@@ -30,12 +29,8 @@ class StoryController extends AdminController
      */
     public function create()
     {
-        return $this->editForm(
-            new Story,
-            route('stories.store'),
-            'POST',
-            'Create'
-        );
+
+        return $this->editForm(new Story);
     }
 
     /**
@@ -57,7 +52,7 @@ class StoryController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(int $id)
     {
         return $this->edit($id);
     }
@@ -68,14 +63,9 @@ class StoryController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(int $id)
     {
-        return $this->editForm(
-            Story::find($id),
-            route('stories.update', $id),
-            'PUT',
-            'Update'
-        );
+        return $this->editForm(Story::find($id));
     }
 
     /**
@@ -85,7 +75,7 @@ class StoryController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(StoryRequest $request, $id)
+    public function update(StoryRequest $request, int $id)
     {
         Story::find($id)->update($request->all());
 
@@ -96,18 +86,11 @@ class StoryController extends AdminController
      * Show the form for editing the specified story.
      *
      * @param  App\Models\Story  $story
-     * @param  string  $url
-     * @param  string  $method
-     * @param  string  $submit
      * @return \Illuminate\Http\Response
      */
-    private function editForm(Story $story, string $url, string $method, string $submit) {
+    private function editForm(Story $story) {
         return View::make('admin.story.edit')->with([
-            'resource_name' => 'Story',
             'resource' => $story,
-            'url' => $url,
-            'method' => $method,
-            'submit' => $submit,
             'prevent_destory' => true,
         ]);
     }

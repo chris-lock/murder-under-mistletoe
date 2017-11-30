@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Support\Facades\View;
 use App\Http\Requests\CharacterRequest;
@@ -36,12 +35,7 @@ class CharacterController extends AdminController
      */
     public function create()
     {
-        return $this->editForm(
-            new Character,
-            route('characters.store'),
-            'POST',
-            'Create'
-        );
+        return $this->editForm(new Character);
     }
 
     /**
@@ -63,14 +57,9 @@ class CharacterController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(int $id)
     {
-        return $this->editForm(
-            Character::find($id),
-            route('characters.update', $id),
-            'PUT',
-            'Update'
-        );
+        return $this->editForm(Character::find($id));
     }
 
     /**
@@ -80,7 +69,7 @@ class CharacterController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CharacterRequest $request, $id)
+    public function update(CharacterRequest $request, int $id)
     {
         Character::find($id)->update($request->all());
 
@@ -93,7 +82,7 @@ class CharacterController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         Character::find($id)->delete();
 
@@ -104,21 +93,31 @@ class CharacterController extends AdminController
      * Show the form for editing the specified character.
      *
      * @param  App\Models\Character  $character
-     * @param  string  $url
-     * @param  string  $method
-     * @param  string  $submit
+     * @param  ?string  $panel
      * @return \Illuminate\Http\Response
      */
-    private function editForm(Character $character, string $url, string $method, string $submit) {
+    private function editForm(Character $character) {
         return View::make('admin.character.edit')->with([
-            'resource_name' => 'Character',
             'resource' => $character,
-            'url' => $url,
-            'method' => $method,
-            'submit' => $submit,
-            'acts' => Act::all(),
-            'instructions' => $character->instructions->groupBy('act_id'),
-            'relationships' => $character->instructions->groupBy('act_id'),
+            'acts' => $this->acts($character->id),
+            'characters' => Character::all()->where('id', '<>', $character->id),
+            'relationships' => $character->relationships(),
+            'perceptions' => $character->perceptions(),
+            'panel' => request()->query('panel'),
         ]);
+    }
+
+    /**
+     * Get all the acts with instructions for the character.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    private function acts(?int $id) {
+        return Act::with(['instructions' => function ($query) use ($id) {
+            if ($id) {
+                $query->where('character_id', $id);
+            }
+        }])->get();
     }
 }

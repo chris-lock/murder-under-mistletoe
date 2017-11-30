@@ -19,9 +19,21 @@ Auth::routes();
 
 Route::group(array('prefix' => 'admin'), function() {
     Route::get('/', 'Admin\AdminController@index')->name('admin');
+    Route::resource('stories', 'Admin\StoryController', ['except' => [
+        'index',
+    ]]);
     Route::resources([
-        'stories' => 'Admin\StoryController',
         'acts' => 'Admin\ActController',
         'characters' => 'Admin\CharacterController',
     ]);
+    Route::resource('instructions', 'Admin\InstructionController', ['only' => [
+        'store',
+        'update',
+        'destroy',
+    ]]);
+    Route::resource('relationships', 'Admin\RelationshipController', ['only' => [
+        'store',
+        'update',
+        'destroy',
+    ]]);
 });

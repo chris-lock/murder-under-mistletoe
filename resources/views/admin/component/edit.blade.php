@@ -2,25 +2,30 @@
 
 @section('panel')
     <div class="panel-heading clearfix">
-        <h1 class="panel-title pull-left">{{ "$submit $resource_name" }}</h1>
+        <h1 class="panel-title pull-left">
+            {{ (isset($resource->id) ? 'Update' : 'Create') . ' ' . model_name($resource) }}
+        </h1>
 
-        @if(isset($resource->id) && !isset($prevent_destory))
-            {{ Form::open(array(
-                'url' => route(strtolower($resource_name) . 's.destroy', $resource->id),
-                'method' => 'DELETE',
-            )) }}
-                {{ Form::submit('Delete', array('class' => 'btn btn-danger btn-xs pull-right')) }}
-            {{ Form::close() }}
+        @if(!isset($prevent_destory))
+            @include('admin.component.form.delete', [
+                'resource' => $resource,
+            ])
         @endif
     </div>
 
-    <div class="panel-body">
-        {{ Html::ul($errors->all()) }}
+    @yield('tabs')
 
-        {{ Form::open(array('url' => $url, 'method' => $method)) }}
-            @yield('form')
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane{{ isset($panel) ? "" : " active" }}" id="main">
+            <div class="panel-body">
+                @component('admin.component.form.edit', [
+                    'resource' => $resource,
+                ])
+                    @yield('form')
+                @endcomponent
+            </div>
+        </div>
 
-            {{ Form::submit($submit, array('class' => 'btn btn-primary')) }}
-        {{ Form::close() }}
+        @stack('tab-panes')
     </div>
 @endsection

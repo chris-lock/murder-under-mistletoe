@@ -5,15 +5,15 @@
     <div class="row">
         <div class="col-md-3 sidebar">
             <nav class="list-group">
-                <a class="list-group-item{{ activePathClass('admin/stories') }}" href="/admin/stories">
+                <a class="list-group-item{{ active_path_class('admin/stories') }}" href="/admin/stories">
                     Story
                 </a>
 
-                <a class="list-group-item{{ activePathClass('admin/acts') }}" href="/admin/acts">
+                <a class="list-group-item{{ active_path_class('admin/acts') }}" href="/admin/acts">
                     Acts
                 </a>
 
-                <a class="list-group-item{{ activePathClass('admin/characters') }}" href="/admin/characters">
+                <a class="list-group-item{{ active_path_class('admin/characters') }}" href="/admin/characters">
                     Characters
                 </a>
             </nav>

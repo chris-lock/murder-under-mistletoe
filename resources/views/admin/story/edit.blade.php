@@ -13,7 +13,10 @@
 
     <div class="form-group">
         {{ Form::label('copy', 'Copy') }}
-        {{ Form::textarea('copy', $resource->copy, array('class' => 'form-control')) }}
+        {{ Form::textarea('copy', $resource->copy, array(
+            'class' => 'form-control',
+            'rows' => '3',
+        )) }}
     </div>
 @endsection
 

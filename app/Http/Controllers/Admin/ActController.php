@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Support\Facades\View;
 use App\Http\Requests\ActRequest;
@@ -34,12 +33,7 @@ class ActController extends AdminController
      */
     public function create()
     {
-        return $this->editForm(
-            new Act,
-            route('acts.store'),
-            'POST',
-            'Create'
-        );
+        return $this->editForm(new Act);
     }
 
     /**
@@ -61,14 +55,9 @@ class ActController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(int $id)
     {
-        return $this->editForm(
-            Act::find($id),
-            route('acts.update', $id),
-            'PUT',
-            'Update'
-        );
+        return $this->editForm(Act::find($id));
     }
 
     /**
@@ -78,7 +67,7 @@ class ActController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ActRequest $request, $id)
+    public function update(ActRequest $request, int $id)
     {
         Act::find($id)->update($request->all());
 
@@ -91,7 +80,7 @@ class ActController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         Act::find($id)->delete();
 
@@ -102,18 +91,11 @@ class ActController extends AdminController
      * Show the form for editing the specified act.
      *
      * @param  App\Models\Act  $act
-     * @param  string  $url
-     * @param  string  $method
-     * @param  string  $submit
      * @return \Illuminate\Http\Response
      */
-    private function editForm(Act $act, string $url, string $method, string $submit) {
-        return View::make('admin.act.edit')->with([
-            'resource_name' => 'Act',
+    private function editForm(Act $act, string $action) {
+        return View::make('admin.story.edit')->with([
             'resource' => $act,
-            'url' => $url,
-            'method' => $method,
-            'submit' => $submit,
         ]);
     }
 }

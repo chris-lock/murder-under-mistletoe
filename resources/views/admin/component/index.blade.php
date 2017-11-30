@@ -38,7 +38,7 @@
                         <td>
                             <a
                                 class="btn btn-primary btn-xs pull-right"
-                                href="{{ route(strtolower($controller) . 's.edit', $resource->id) }}"
+                                href="{{ model_route($resource, 'edit') }}"
                             >
                                 Edit
                             </a>

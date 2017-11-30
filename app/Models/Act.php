@@ -38,6 +38,6 @@ class Act extends Model
      */
     public function instructions()
     {
-        return $this->hasMany('Models\Instruction');
+        return $this->hasMany('App\Models\Instruction');
     }
 }
