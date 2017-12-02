@@ -11,10 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
 Route::group(array('prefix' => 'admin'), function() {
@@ -36,4 +32,8 @@ Route::group(array('prefix' => 'admin'), function() {
         'update',
         'destroy',
     ]]);
+});
+
+Route::fallback(function () {
+    return view('app');
 });
