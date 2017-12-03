@@ -17,8 +17,11 @@ class InstructionController extends AdminController
      */
     public function store(InstructionRequest $request)
     {
+        $instruction = Instruction::create($request->all());
+
         return $this->redirectToCharacter(
-            Instruction::create($request->all())->character_id
+            $instruction->character_id,
+            $instruction->act_id
         );
     }
 
@@ -34,7 +37,10 @@ class InstructionController extends AdminController
         $instruction = Instruction::find($id);
         $instruction->update($request->all());
 
-        return $this->redirectToCharacter($instruction->character_id);
+        return $this->redirectToCharacter(
+            $instruction->character_id,
+            $instruction->act_id
+        );
     }
 
     /**
@@ -58,10 +64,13 @@ class InstructionController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    private function redirectToCharacter(int $id) {
+    private function redirectToCharacter(int $id, ?int $return_id) {
         return redirect()->route('characters.edit', [
             'character' => $id,
             'panel' => 'instructions',
+            isset($return_id)
+                ? '#act-' . $return_id
+                : '',
         ]);
     }
 }

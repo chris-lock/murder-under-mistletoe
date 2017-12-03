@@ -1,0 +1,140 @@
+//  type-sizes-for-dimension-set()
+//  ----------------------------------------------------------------------------
+  @mixin type-sizes-for-dimension-set($type) {
+    @include dimension-set-breakpoints(type, $type, font-size) {
+      @include font(
+        dimension(type, $type, font-size),
+        dimension(type, $type, line-height)
+      );
+    }
+  }
+
+//  type-delimiter()
+//  ----------------------------------------------------------------------------
+  @mixin type-delimiter(
+    $width,
+    $color: color-state(red-dark),
+    $height: 4px,
+    $spacing: 10px
+  ) {
+    &:after {
+      @include pseudo($position: relative);
+      border-top: $height solid $color;
+      margin: $spacing auto;
+      width: $width;
+    }
+  }
+
+//  type-headline-1()
+//  ----------------------------------------------------------------------------
+  @mixin type-headline-1($color: color-state(red-light)) {
+    @include serif(black, normal);
+    @include type-sizes-for-dimension-set(headline-1);
+    color: $color;
+    text-align: center;
+  }
+
+//  type-eyebrow()
+//  ----------------------------------------------------------------------------
+  @mixin type-eyebrow($color: color-state(red-light)) {
+    @include sans-serif(medium, normal);
+    @include type-sizes-for-dimension-set(eyebrow);
+    @include uppercase(2px);
+    color: $color;
+    text-align: center;
+  }
+
+//  type-nav()
+//  ----------------------------------------------------------------------------
+  @mixin type-nav($color: color-state(red-light)) {
+    @include sans-serif(medium, normal);
+    @include type-sizes-for-dimension-set(nav);
+    @include uppercase(1.5px);
+    color: $color;
+  }
+
+//  type-body()
+//  ----------------------------------------------------------------------------
+  @mixin type-body($color: color-state(red-light)) {
+    @include serif(medium, normal);
+    @include type-sizes-for-dimension-set(body);
+    color: $color;
+    text-align: center;
+  }
+
+//  type-body-large()
+//  ----------------------------------------------------------------------------
+  @mixin type-body-large($color: color-state(red-light)) {
+    @include serif(medium, normal);
+    @include type-sizes-for-dimension-set(body-large);
+    color: $color;
+    text-align: center;
+  }
+
+//  type-section-title()
+//  ----------------------------------------------------------------------------
+  @mixin type-section-title($color: color-state(red-light)) {
+    @include sans-serif(medium, normal);
+    @include type-sizes-for-dimension-set(nav);
+    @include uppercase(2px);
+    display: block;
+    color: $color;
+    margin-bottom: 1em;
+    overflow: hidden;
+
+    @include dimension-set-breakpoints(view, inset) {
+      margin-left: dimension(view, inset);
+      margin-right: dimension(view, inset);
+    }
+
+    &__inner {
+      position: relative;
+
+      @include dimension-set-breakpoints(view, inset) {
+        padding-left: dimension(view, inset);
+        padding-right: dimension(view, inset);
+      }
+
+      &:before,
+      &:after {
+        @include pseudo();
+        @include vertical-center();
+        border-top: 1px solid $color;
+        width: 20000%;
+      }
+
+      &:before {
+        right: 100%;
+      }
+
+      &:after {
+        left: 100%;
+      }
+    }
+  }
+
+//  type-markdown()
+//  ----------------------------------------------------------------------------
+  @mixin type-markdown() {
+    p {
+      margin: 1em 0;
+    }
+
+    strong {
+      font-weight: 800;
+    }
+
+    i,
+    em {
+      font-style: italic;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }

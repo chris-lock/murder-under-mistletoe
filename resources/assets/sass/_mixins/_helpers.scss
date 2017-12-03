@@ -1,0 +1,920 @@
+//  ----------------------------------------------------------------------------
+//  Table of Contents (keep up-to-date)
+//  ----------------------------------------------------------------------------
+//
+//  _functions
+//    _map-deep-get()
+//    _map-get-optional()
+//    _str-replace()
+//    _selector-to-class-name()
+//  _overrides
+//    _plattern-reset()
+//    _conditional-partial-plattern-layout()
+//    _partial-plattern-layout-reset()
+//    _partial-plattern-current-selector()
+//    _partial-plattern-at-root()
+//    _reset-mixin-transform-if-not-used-in-this-scope()
+//    _mixin-transform()
+//    _transform()
+//  _layout
+//    _border-radius()
+//    _border-radius-fix-override()
+//    _word-break()
+//    _text-ellipsis()
+//    _visually-hidden()
+//    _placeholder()
+//    _hover()
+//    _active()
+//    _hover-active-override
+//    _disabled()
+//    _loading()
+//    _mouse-states()
+//    _pseudo()
+//    _illustration-background()
+//    _background-size-adjusted()
+//    _background-url()
+//    _background-image-set()
+//    _background-image-retina()
+//    _full-width-image()
+//    _image-cover()
+//    _image-replacement()
+//    _aspect-ratio()
+//    _center()
+//    _horizontal-center()
+//    _horizontal-center-reset()
+//    _vertical-center()
+//    _vertical-center-reset()
+//    _vertical-center-fluid()
+//    _vertical-space-content()
+//    _noselect()
+//    _clearfix()
+//    _fixed()
+//    _edges()
+//    _layer()
+//    _scrollable()
+//    _z-index()
+//    _background-image-inline-styles()
+//  _sass
+//    _opposite-direction()
+//    _conditionally-wrap()
+//    _conditional-overrideable-prop()
+//  _elements
+//    _caret
+//      _caret-down()
+//      _caret-left()
+//      _caret-right()
+//      _caret-up()
+//
+//  ----------------------------------------------------------------------------
+
+
+//  ----------------------------------------------------------------------------
+//  _functions
+//  ----------------------------------------------------------------------------
+
+  //  _map-deep-get()
+  //  ----------------------------------------------------------------------------
+    @function map-deep-get($map, $keys...) {
+      @each $key in $keys {
+        $map: map-get($map, $key);
+      }
+
+      @return $map;
+    }
+
+  //  _map-get-optional()
+  //  ----------------------------------------------------------------------------
+    @function map-get-optional($map, $optional-key, $default) {
+      @return if(
+        map-has-key($map, $optional-key),
+        map-get($map, $optional-key),
+        $default
+      );
+    }
+
+  //  _str-replace()
+  //  ----------------------------------------------------------------------------
+    @function str-replace($string, $search, $replace: '') {
+      $index: str-index($string, $search);
+
+      @if $index {
+        @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+      }
+
+      @return $string;
+    }
+
+//  ----------------------------------------------------------------------------
+//  _sass
+//  ----------------------------------------------------------------------------
+
+  //  ----------------------------------------------------------------------------
+  //  _opposite-direction()
+  //  ----------------------------------------------------------------------------
+    // compass method in pure sass to get the opposite side
+    @function opposite-direction($directions) {
+      $opposite-directions: ();
+      $direction-map: (
+        'top': 'bottom',
+        'right': 'left',
+        'bottom': 'top',
+        'left': 'right',
+        'center': 'center',
+        'ltr': 'rtl',
+        'rtl': 'ltr',
+      );
+
+      @each $direction in $directions {
+        $direction: to-lower-case($direction);
+
+        @if map-has-key($direction-map, $direction) {
+          $opposite-directions: append($opposite-directions, unquote(map-get($direction-map, $direction)));
+        } @else {
+          @warn "No opposite direction can be found for `#{$direction}`. Direction omitted.";
+        }
+      }
+
+      @return $opposite-directions;
+    }
+
+  //  ----------------------------------------------------------------------------
+  //  _conditionally-wrap()
+  //  ----------------------------------------------------------------------------
+    // Used within mixins for conditionally nested styles
+    @mixin conditionally-wrap($selector) {
+      @if ($selector) {
+        #{$selector} {
+          @content
+        }
+      } @else {
+        @content
+      }
+    }
+
+  //  _conditional-overrideable-prop()
+  //  ----------------------------------------------------------------------------
+    // Provides the ability to exclude and override properties inside a mixin
+    @mixin conditional-overrideable-prop($prop, $exclude, $override, $default) {
+      @if (not(index($exclude, $prop))) {
+        #{$prop}: map-get-optional($override, $prop, $default);
+      }
+    }
+
+//  ----------------------------------------------------------------------------
+//  _overrides
+//  ----------------------------------------------------------------------------
+
+  //  _plattern-reset()
+  //  ----------------------------------------------------------------------------
+    @mixin plattern-reset {
+      * {
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        -webkit-text-size-adjust: none;
+        box-sizing: border-box;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+
+        &:focus {
+          outline: 0 none;
+        }
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        a {
+          color: inherit;
+        }
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      b,
+      strong {
+        font-weight: normal;
+      }
+
+      button,
+      input,
+      textarea,
+      select {
+        appearance: none;
+        background: none;
+        border: 0 none;
+        border-radius: 0;
+        box-shadow: 0 0 0;
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+        margin: 0;
+        outline: 0 none;
+        padding: 0;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      img {
+        position: relative;
+      }
+    }
+
+  //  _conditional-partial-plattern-layout()
+  //  ----------------------------------------------------------------------------
+    @mixin conditional-partial-plattern-layout() {
+      @if ($partial-plattern-layout) {
+        @include partial-plattern-layout-reset() {
+          @content;
+        }
+      } @else {
+        @at-root {
+          @content;
+        }
+      }
+    }
+
+  //  _partial-plattern-layout-reset()
+  //  ----------------------------------------------------------------------------
+    $partial-plattern-layout-reset-included: false !global;
+
+    @mixin partial-plattern-layout-reset() {
+      .partial-plattern-layout {
+        @if (not($partial-plattern-layout-reset-included)) {
+          $partial-plattern-layout-reset-included: true !global;
+
+          @include global-reset();
+          @include plattern-reset();
+        }
+
+        @content;
+      }
+    }
+
+  //  _partial-plattern-current-selector()
+  //  ----------------------------------------------------------------------------
+    @function partial-plattern-current-selector($context) {
+      @return str-replace("#{selector-parse(&)}", '.partial-plattern-layout ', '');
+    }
+
+  //  _selector-to-class-name()
+  //  ----------------------------------------------------------------------------
+    @function selector-to-class-name($selector) {
+      @return str-replace("#{selector-parse($selector)}", '.', '');
+    }
+
+  //  _partial-plattern-at-root()
+  //  ----------------------------------------------------------------------------
+    @mixin partial-plattern-at-root() {
+      @if ($partial-plattern-layout) {
+        @at-root {
+          .partial-plattern-layout {
+            @content;
+          }
+        }
+      } @else {
+        @at-root {
+          @content;
+        }
+      }
+    }
+
+  //  _reset-mixin-transform-if-not-used-in-this-scope()
+  //  ----------------------------------------------------------------------------
+    $declared-transform: null !global;
+    $mixin-transform: null !global;
+    $selector-using-mixin-transform: '' !global;
+    $breakpoint-using-mixin-transform: '' !global;
+
+    @mixin reset-mixin-transform-if-not-used-in-this-scope() {
+      @if ((&) != ($selector-using-mixin-transform) or $current-breakpoint != $breakpoint-using-mixin-transform) {
+        $declared-transform: null !global;
+        $mixin-transform: null !global;
+        $selector-using-mixin-transform: & !global;
+        $breakpoint-using-mixin-transform: $current-breakpoint !global;
+      }
+    }
+
+  //  _mixin-transform()
+  //  ----------------------------------------------------------------------------
+    @mixin mixin-transform($transform) {
+      @include reset-mixin-transform-if-not-used-in-this-scope();
+
+      $mixin-transform: join($mixin-transform, $transform, space) !global;
+
+      @include transform($declared-transform);
+    }
+
+  //  _transform()
+  //  ----------------------------------------------------------------------------
+    @mixin transform($transform) {
+      @include reset-mixin-transform-if-not-used-in-this-scope();
+
+      $declared-transform: $transform !global;
+
+      transform: join($mixin-transform, $transform, space);
+    }
+
+//  ----------------------------------------------------------------------------
+//  _layout
+//  ----------------------------------------------------------------------------
+
+  //  _border-radius()
+  //  ----------------------------------------------------------------------------
+    //  Border radius breaks on mobile devices Chrome/Opera on small screen sizes. WTF?!?
+    @mixin border-radius($border-radius) {
+      border-radius: $border-radius;
+      // This fixes it? FML! https://codepen.io/RONvanNOORD/pen/gHDCf
+      -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
+    }
+
+  //  _border-radius-fix-override()
+  //  ----------------------------------------------------------------------------
+    //  -webkit-mask-image prevents box-shadow from being visible
+    @mixin border-radius-fix-override() {
+      -webkit-mask-image: none;
+    }
+
+  //  _word-break()
+  //  ----------------------------------------------------------------------------
+    //  Breaks long words when then extend past the container.
+    @mixin word-break() {
+      -ms-word-break: break-all;
+      word-break: break-word;
+      word-wrap: break-word;
+      hyphens: auto;
+      -moz-hyphens: auto;
+      -webkit-hyphens: auto;
+    }
+
+  //  _text-ellipsis()
+  //  ----------------------------------------------------------------------------
+    //  Breaks long words when then extend past the container.
+    @mixin text-ellipsis() {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+  //  _visually-hidden()
+  //  ----------------------------------------------------------------------------
+    //  Hides an element visually, but leaves it visible to screen-readers.
+    @mixin visually-hidden() {
+      border: 0;
+      clip: rect(0 0 0 0);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      width: 1px;
+    }
+
+  //  _placeholder()
+  //  ----------------------------------------------------------------------------
+    //  Sets placeholder color including date fields.
+    @mixin placeholder($color) {
+      &::-webkit-input-placeholder {
+        color: $color;
+      }
+
+      &:-moz-placeholder {
+        color: $color;
+      }
+
+      &::-moz-placeholder {
+        color: $color;
+      }
+
+      &:-ms-input-placeholder {
+        color: $color;
+      }
+
+      &::-webkit-datetime-edit-text,
+      &::-webkit-datetime-edit-month-field,
+      &::-webkit-datetime-edit-day-field,
+      &::-webkit-datetime-edit-year-field {
+        color: $color;
+      }
+    }
+
+  //  _hover()
+  //  -----------------------------------------------------------------------------
+    //  A mixin for adding hover styling that accounts for touch.
+    @mixin hover() {
+      .not-touch & {
+        &:hover,
+        &:focus {
+          @content;
+        }
+      }
+    }
+
+  //  _active()
+  //  -----------------------------------------------------------------------------
+    //  A mixin for adding active styling that accounts for touch.
+    @mixin active() {
+      .not-touch &,
+      .touch & {
+        &:active {
+          @content;
+        }
+      }
+    }
+
+  //  _hover-active-override()
+  //  -----------------------------------------------------------------------------
+    //  Override hover and active states
+    @mixin hover-active-override($selector) {
+      &#{$selector} {
+        @content;
+
+        @include hover() {
+          @content;
+        }
+        @include active() {
+          @content;
+        }
+      }
+    }
+
+  //  _disabled()
+  //  -----------------------------------------------------------------------------
+    //  Adding disabled styles that override active and hover
+    @mixin disabled() {
+      @include hover-active-override(":disabled") {
+        @content;
+      }
+    }
+
+  //  _loading()
+  //  -----------------------------------------------------------------------------
+    //  Adding loading styles that override active and hover
+    @mixin loading() {
+      @include hover-active-override("--loading") {
+        @content;
+      }
+    }
+
+  //  _mouse-states()
+  //  -----------------------------------------------------------------------------
+    //  A mixin for adding hover styling that accounts for touch.
+    @mixin mouse-states($states) {
+      @each $state in $states {
+        @if ($state == all or $state == off) {
+          @content;
+        }
+
+        @if ($state == all or $state == hover) {
+          @include hover() {
+            @content;
+          }
+        }
+
+        @if ($state == all or $state == active) {
+          @include active() {
+            @content;
+          }
+        }
+      }
+    }
+
+  //  _pseudo()
+  //  ----------------------------------------------------------------------------
+    // Use for :before and :after. The parent will need to be
+    // position: relative;
+    @mixin pseudo($content: "", $position: absolute) {
+      content: $content;
+      display: block;
+      position: $position;
+    }
+
+  //  _illustration-background()
+  //  ----------------------------------------------------------------------------
+    @mixin illustration-background($background-url: false, $position: relative) {
+      @if ($background-url) {
+        @include background-url($background-url);
+      }
+
+      @include pseudo($position: $position);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: auto 100%;
+    }
+
+  //  _background-size-adjusted()
+  //  ----------------------------------------------------------------------------
+    @mixin background-size-adjusted($original-width, $original-height, $adjusted-width) {
+      $adjusted-height: $original-height / $original-width * $adjusted-width;
+
+      background-size: $adjusted-width $adjusted-height;
+    }
+
+  //  _background-url()
+  //  ----------------------------------------------------------------------------
+    @mixin background-url($image-path) {
+      background-image: url('/assets/images/backgrounds/' + $image-path);
+    }
+
+  //  _background-image-set()
+  //  ----------------------------------------------------------------------------
+    @mixin background-image-set($image-base, $breakpoint-names: (large, x-large, medium, small, x-small), $extension: jpg) {
+      @each $breakpoint-name in $breakpoint-names {
+        @include breakpoint($breakpoint-name) {
+          @include background-image-retina('#{$image-base}-#{$breakpoint-name}', $extension);
+        }
+      }
+      background-position: center center;
+      background-size: cover;
+    }
+
+  //  _background-image-retina()
+  //  ----------------------------------------------------------------------------
+    @mixin background-image-retina($image-base, $extension: jpg) {
+      @include background-url('#{$image-base}-1x.#{$extension}');
+
+      @include retina() {
+        @include background-url('#{$image-base}-2x.#{$extension}');
+      }
+    }
+
+  //  _deprecated-background-url()
+  //  ----------------------------------------------------------------------------
+    @mixin deprecated-background-url($image-path) {
+      background-image: url('/assets/images/__deprecated/backgrounds/' + $image-path);
+    }
+
+  //  _deprecated-background-image-set()
+  //  ----------------------------------------------------------------------------
+    @mixin deprecated-background-image-set($image-base, $breakpoint-names: (large, x-large, medium, small, x-small), $extension: jpg) {
+      @each $breakpoint-name in $breakpoint-names {
+        @include breakpoint($breakpoint-name) {
+          @include deprecated-background-image-retina('#{$image-base}-#{$breakpoint-name}', $extension);
+        }
+      }
+      background-position: center center;
+      background-size: cover;
+    }
+
+  //  _deprecated-background-image-retina()
+  //  ----------------------------------------------------------------------------
+    @mixin deprecated-background-image-retina($image-base, $extension: jpg) {
+      @include deprecated-background-url('#{$image-base}-1x.#{$extension}');
+
+      @include retina() {
+        @include deprecated-background-url('#{$image-base}-2x.#{$extension}');
+      }
+    }
+
+  //  _full-width-image()
+  //  ----------------------------------------------------------------------------
+    @mixin full-width-image() {
+      display: block;
+      height: auto;
+      width: 100%;
+    }
+
+  //  _image-cover()
+  //  ----------------------------------------------------------------------------
+    @mixin image-cover() {
+      bottom: -10000%;
+      left:-10000%;
+      margin: auto;
+      min-width: 1000%;
+      min-height: 1000%;
+      position: absolute;
+      right: -10000%;
+      top: -10000%;
+      transform: scale(0.1);
+    }
+
+  //  _image-replacement()
+  //  ----------------------------------------------------------------------------
+    // Use to hide text when links are only icons.
+    @mixin image-replacement() {
+      overflow: hidden;
+      text-indent: -9999em;
+      white-space: nowrap;
+    }
+
+  //  _aspect-ratio()
+  //  ----------------------------------------------------------------------------
+    // Used for elements that should mimic a picture's aspect ratio
+    @mixin aspect-ratio($aspect-width, $aspect-height, $element-width: 100%) {
+      padding-bottom: $aspect-height / $aspect-width * 100%;
+      width: $element-width;
+    }
+
+  //  _center()
+  //  ----------------------------------------------------------------------------
+    // Use to horizontally center `position: relative` elements inside their parent.
+    @mixin center() {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+  //  _horizontal-center()
+  //  ----------------------------------------------------------------------------
+    // Use to horizontally center a :before and :after. The parent will need
+    // to be position: relative;
+    @mixin horizontal-center($margin-left: false, $position: absolute) {
+      @if ($margin-left) {
+        margin-left: $margin-left;
+      } @else {
+        @include mixin-transform(translateX(-50%));
+      }
+
+      left: 50%;
+      position: $position;
+    }
+
+  //  _horizontal-center-reset()
+  //  ----------------------------------------------------------------------------
+    // Use to reset horizontal center
+    @mixin horizontal-center-reset() {
+      @include mixin-transform(translateX(0));
+      left: auto;
+      margin-left: auto;
+    }
+
+  //  _vertical-center()
+  //  ----------------------------------------------------------------------------
+    // Use to vertically center a :before and :after. The parent will need
+    // to be position: relative;
+    @mixin vertical-center($margin-top: false, $position: absolute) {
+      @if ($margin-top) {
+        margin-top: $margin-top;
+      } @else {
+        @include mixin-transform(translateY(-50%));
+      }
+
+      position: $position;
+      top: 50%;
+    }
+
+    @mixin optional-vertical-center($top) {
+      @if ($top) {
+        @include vertical-center-reset();
+        position: absolute;
+        top: $top;
+      } @else {
+        @include vertical-center();
+      }
+    }
+
+  //  _vertical-center-reset()
+  //  ----------------------------------------------------------------------------
+    // Use to reset vertical center
+    @mixin vertical-center-reset($margin-top: false) {
+      @include mixin-transform(translateY(0));
+      position: static;
+      top: auto;
+    }
+
+  //  _vertical-center-fluid()
+  //  ----------------------------------------------------------------------------
+    // Use to vertically center dynamic amounts of text in a parent
+    // container.
+    @mixin vertical-center-fluid($child-class, $text-align: center) {
+      display: table;
+      height: 100%;
+      text-align: $text-align;
+
+      .#{$child-class} {
+        display: table-cell;
+        vertical-align: middle;
+      }
+    }
+
+  //  _vertical-space-content()
+  //  ----------------------------------------------------------------------------
+    @mixin vertical-space-content($padding) {
+      padding-bottom: $padding;
+      padding-top: $padding;
+    }
+
+
+  //  _noselect()
+  //  ----------------------------------------------------------------------------
+    // Prevents text from being selected on click.
+    @mixin noselect() {
+      -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none;   /* Chrome/Safari/Opera */
+      -khtml-user-select: none;    /* Konqueror */
+      -moz-user-select: none;      /* Firefox */
+      -ms-user-select: none;       /* Internet Explorer/Edge */
+      user-select: none;           /* Non-prefixed version */
+    }
+
+  //  _clearfix()
+  //  ----------------------------------------------------------------------------
+    // Generic clearfix to make a parent stretch to contain floated children.
+    @mixin clearfix() {
+      &:before,
+      &:after {
+        content: "\0020";
+        display: block;
+        height: 0;
+        overflow: hidden;
+      }
+
+      &:after {
+        clear: both;
+      }
+    }
+
+  //  _fixed()
+  //  ----------------------------------------------------------------------------
+    //  Make sure that all position fixed elements are layers.
+    @mixin fixed() {
+      @include layer();
+      position: fixed;
+    }
+
+  //  _edges()
+  //  ----------------------------------------------------------------------------
+    //  Useful when you need an absolute positioned child to be maintain the
+    //  dimensions of it's parent.
+    @mixin edges($position: absolute, $exclude: (), $override: ()) {
+      @if (unquote($position) == fixed) {
+        @include fixed();
+      } @else {
+        position: $position;
+      }
+
+      @include conditional-overrideable-prop(bottom, $exclude, $override, 0);
+      @include conditional-overrideable-prop(left, $exclude, $override, 0);
+      @include conditional-overrideable-prop(right, $exclude, $override, 0);
+      @include conditional-overrideable-prop(top, $exclude, $override, 0);
+    }
+
+  //  _layer()
+  //  ----------------------------------------------------------------------------
+    // Promotes an element to a layer. Use carefully:
+    // http://aerotwist.com/blog/on-translate3d-and-layer-creation-hacks/
+    @mixin layer() {
+      backface-visibility: hidden;
+    }
+
+  //  _scrollable()
+  //  ----------------------------------------------------------------------------
+    // Makes an element scrollable on touch devices
+    @mixin scrollable() {
+      @include layer();
+      overflow: auto;
+
+      .not-windows & {
+        .touch & {
+          -webkit-overflow-scrolling: touch;
+          overflow: scroll;
+        }
+      }
+    }
+
+  //  _z-index()
+  //  ----------------------------------------------------------------------------
+    // Gets a z-index relative to the app heirarchy.
+    @mixin z-index($z-index-name, $z-index-offset: 0) {
+      $base-z-index: 200;
+      $z-index-increment: 10;
+
+      $z-index-position: length($z-indexes) - index($z-indexes, $z-index-name);
+      $z-index: $base-z-index + ($z-index-position * $z-index-increment) + $z-index-offset;
+
+      z-index: $z-index;
+    }
+
+  //  _background-image-inline-styles()
+  //  ----------------------------------------------------------------------------
+    // Toggles visibility of pre-designated background image containers
+    %background-image-inline-style {
+      @include edges();
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: auto 100%;
+      display: none;
+    }
+
+    @mixin background-image-inline-styles(
+      $breakpoints: (x-large, large, medium, small, x-small)
+    ) {
+      @each $breakpoint in $breakpoints {
+        @each $resolution in (1x, 2x) {
+          &--#{$breakpoint}--#{$resolution} {
+            @extend %background-image-inline-style;
+
+            @include breakpoint($breakpoint) {
+              display: block;
+            }
+          }
+        }
+      }
+    }
+
+//  ----------------------------------------------------------------------------
+//  _elements
+//  ----------------------------------------------------------------------------
+
+  //  ----------------------------------------------------------------------------
+  //  _caret
+  //  ----------------------------------------------------------------------------
+    //  Mixin to create carets easily. Should be applied to the parent element.
+    //  Caret will be applied to the pseudo element which can be changed in the
+    //  parameters passed in.
+    @mixin caret-base($direction, $color, $base, $vertex, $layout: false, $pseudo-or-selector: before) {
+      $selector: $pseudo-or-selector;
+      $vertical-direction: false;
+      $opposite-direction: opposite-direction($direction);
+      $side-width: $base / 2;
+      $side-1: top;
+      $side-2: bottom;
+
+      @if ($direction == top or $direction == bottom) {
+        $vertical-direction: true;
+        $side-1: left;
+        $side-2: right;
+      }
+
+      @if ($pseudo-or-selector == before or $pseudo-or-selector == after) {
+        $selector: "&:#{$pseudo-or-selector}";
+      }
+
+      #{$selector} {
+        @include pseudo();
+        border: 0 solid transparent;
+        height: 0;
+        width: 0;
+        border-#{$opposite-direction}-width: $vertex;
+        border-#{$side-1}-width: $side-width;
+        border-#{$side-2}-width: $side-width;
+
+        @if ($color) {
+          border-#{$opposite-direction}-color: $color;
+        }
+
+        @if ($layout == vertical) {
+          @if ($vertical-direction) {
+            margin-top: -$side-width / 2;
+          } @else {
+            margin-top: -$side-width;
+          }
+
+          top: 50%;
+        } @else if ($layout == horizontal) {
+          @if ($vertical-direction) {
+            margin-left: -$side-width;
+          } @else {
+            margin-left: -$side-width / 2;
+          }
+
+          left: 50%;
+        }
+
+        @content;
+      }
+    }
+
+    //  _caret-down()
+    //  ----------------------------------------------------------------------------
+      @mixin caret-down($color, $base, $vertex, $layout: false, $pseudo-or-selector: before) {
+        @include caret-base(bottom, $color, $base, $vertex, $layout, $pseudo-or-selector) {
+          @content;
+        }
+      }
+
+    //  _caret-left()
+    //  ----------------------------------------------------------------------------
+      @mixin caret-left($color, $base, $vertex, $layout: false, $pseudo-or-selector: before) {
+        @include caret-base(left, $color, $base, $vertex, $layout, $pseudo-or-selector) {
+          @content;
+        }
+      }
+
+    //  _caret-right()
+    //  ----------------------------------------------------------------------------
+      @mixin caret-right($color, $base, $vertex, $layout: false, $pseudo-or-selector: before) {
+        @include caret-base(right, $color, $base, $vertex, $layout, $pseudo-or-selector) {
+          @content;
+        }
+      }
+
+    //  _caret-up()
+    //  ----------------------------------------------------------------------------
+      @mixin caret-up($color, $base, $vertex, $layout: false, $pseudo-or-selector: before) {
+        @include caret-base(top, $color, $base, $vertex, $layout, $pseudo-or-selector) {
+          @content;
+        }
+      }

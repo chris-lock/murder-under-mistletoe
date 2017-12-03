@@ -1,0 +1,335 @@
+@import '_variables/_breakpoints';
+@import '_variables/_colors';
+@import '_variables/_dimensions';
+
+@import '_mixins/_fonts';
+@import '_mixins/_helpers';
+@import '_mixins/_breakpoints';
+@import '_mixins/_reset';
+@import '_mixins/_typography';
+
+@include global-reset();
+
+* {
+  box-sizing: border-box;
+}
+
+body,
+html {
+  background-color: color-state(red-dark);
+  color: color-state(red-light);
+}
+
+.view {
+  opacity: 1;
+  transition: opacity 1s;
+
+  &--loading {
+    opacity: 0;
+  }
+
+  &--root {
+    &:before {
+      @include pseudo($position: fixed);
+      border: 1px solid color-state(red-light);
+      margin-bottom: env(safe-area-inset-bottom);
+      margin-left: env(safe-area-inset-left);
+      margin-right: env(safe-area-inset-right);
+      margin-top: env(safe-area-inset-top);
+      pointer-events: none;
+
+      @include dimension-set-breakpoints(view, inset) {
+        bottom: dimension(view, inset);
+        left: dimension(view, inset);
+        right: dimension(view, inset);
+        top: dimension(view, inset);
+      }
+    }
+
+    &:after {
+      @include pseudo($position: fixed)
+      border-left: 1px solid color-state(red-light);
+      left: 50%;
+      z-index: 3;
+
+      @include dimension-set-breakpoints(view, inset) {
+        bottom: dimension(view, inset);
+        top: dimension(view, inset);
+      }
+
+      @include breakpoint(small, x-small) {
+        border-left: 0 none;
+        border-top: 1px solid color-state(red-light);
+        bottom: auto;
+        left: dimension(view, inset);
+        margin-left: env(safe-area-inset-left);
+        margin-right: env(safe-area-inset-right);
+        margin-top: 50vh;
+        position: absolute;
+        right: dimension(view, inset);
+      }
+    }
+
+    &__nav {
+      background-color: color-state(red-dark);
+      border-top: 1px solid color-state(red-light);
+      left: 50%;
+      position: fixed;
+      text-align: center;
+      z-index: 2;
+
+      @include dimension-set-breakpoints(view, inset) {
+        bottom: dimension(view, inset) + 1;
+        right: dimension(view, inset) + 1;
+      }
+
+      @include dimension-set-breakpoints(type, nav, line-height) {
+        padding-bottom: dimension(type, nav, line-height);
+        padding-top: dimension(type, nav, line-height);
+      }
+
+      @include breakpoint(small) {
+        margin-bottom: env(safe-area-inset-bottom);
+        margin-right: env(safe-area-inset-right);
+        margin-left: env(safe-area-inset-left);
+      }
+
+      @include breakpoint(small, x-small) {
+        left: dimension(view, inset) + 1;
+      }
+
+      &:before {
+        @include pseudo();
+        background-color: color-state(red-dark);
+        bottom: -301px;
+        left: 0;
+        right: 0;
+        height: 300px;
+      }
+
+      &__link {
+        @include type-nav();
+        text-decoration: none;
+
+        @include dimension-set-breakpoints(view, inset) {
+          margin-left: dimension(view, inset);
+          margin-right: dimension(view, inset);
+        }
+
+        &--active {
+          text-decoration: line-through;
+        }
+      }
+    }
+  }
+
+  &__title {
+    @include type-headline-1($color: color-state(red-dark));
+    background-color: color-state(red-light);
+    position: fixed;
+    right: 50vw;
+    z-index: 1;
+
+    @include dimension-set-breakpoints(view, inset) {
+      bottom: dimension(view, inset) + 1px;
+      left: dimension(view, inset) + 1px;
+      top: dimension(view, inset) + 1px;
+    }
+
+    @include breakpoint(small, x-small) {
+      bottom: auto;
+      height: 50vh;
+      left: dimension(view, inset) + 1px;
+      margin-left: env(safe-area-inset-left);
+      margin-right: env(safe-area-inset-right);
+      margin-top: env(safe-area-inset-top);
+      position: absolute;
+      right: dimension(view, inset) + 1px;
+      top: dimension(view, inset) + 1px;
+    }
+
+    &__inner {
+      @include type-delimiter(80px);
+      @include vertical-center($position: relative);
+      display: block;
+
+      @include dimension-set-breakpoints(view, inset) {
+        padding-left: dimension(view, inset);
+        padding-right: dimension(view, inset);
+      }
+
+      @include dimension-set-breakpoints(type, eyebrow, line-height) {
+        padding-bottom: dimension(type, eyebrow, line-height);
+      }
+    }
+
+      &__eyebrow {
+        @include type-eyebrow($color: color-state(red-dark));
+        display: block;
+
+        @include dimension-set-breakpoints(type, eyebrow, line-height) {
+          padding-bottom: dimension(type, eyebrow, line-height) / 2;
+        }
+      }
+  }
+
+  &__title,
+  &__content {
+    &__inner {
+      margin: 0 auto;
+      max-width: 500px;
+    }
+  }
+
+  &__content {
+    $content-outer-selector: "#{&}__outer";
+
+    margin-left: 50vw;
+
+    @include dimension-set-breakpoints(view, inset) {
+      margin-right: dimension(view, inset);
+    }
+
+    @include breakpoint(small, x-small) {
+      margin-left: dimension(view, inset);
+    }
+
+    &:before,
+    &:after {
+      @include pseudo($position: fixed);
+      background-color: color-state(red-dark);
+      height: 100%;
+      left: 0;
+      right: 0;
+      z-index: 10;
+    }
+
+    &:before {
+      bottom: 100%;
+
+      @include dimension-set-breakpoints(view, inset) {
+        margin-bottom: dimension(view, inset) * -1;
+      }
+    }
+
+    &:after {
+      top: 100%;
+
+      @include dimension-set-breakpoints(view, inset) {
+        margin-top: dimension(view, inset) * -1;
+      }
+    }
+
+    &__main {
+      @include vertical-center-fluid(
+        selector-to-class-name($content-outer-selector)
+      );
+      min-height: 100vh;
+      width: 100%;
+
+      @include breakpoint(small, x-small) {
+        margin-top: 50vh;
+        min-height: 0;
+        padding-top: dimension(view, inset);
+      }
+    }
+
+      #{$content-outer-selector} {
+        @include dimension-set-breakpoints(view, inset) {
+          padding: dimension(view, inset) * 2;
+        }
+
+        @include breakpoint(small, x-small) {
+          padding-left: dimension(view, inset);
+          padding-right: dimension(view, inset);
+          padding-top: dimension(view, inset) * 2;
+        }
+
+        @include all-breakpoints() {
+          padding-bottom: (dimension(view, inset) * 2) + (dimension(type, nav, line-height) * 3);
+        }
+      }
+  }
+
+    &__section {
+      @include dimension-set-breakpoints(view, inset) {
+        margin-bottom: dimension(view, inset) * 2;
+        margin-top: dimension(view, inset) * 2;
+      }
+
+      &__title {
+        @include type-section-title(color-state(red-light));
+      }
+
+      &__timing {
+        @include type-body-large();
+      }
+
+      &__copy {
+        @include type-body();
+
+        &--main {
+          @include type-body-large();
+        }
+
+        &,
+        &--main {
+          @include type-markdown();
+        }
+      }
+    }
+
+    &__schedule {
+      @include dimension-set-breakpoints(view, inset) {
+        margin-bottom: dimension(view, inset);
+        margin-top: dimension(view, inset);
+      }
+
+      &__act {
+        @include type-section-title(color-state(red-light));
+      }
+
+      &__start {
+        @include type-body-large();
+        display: block;
+      }
+    }
+
+    &__relationship {
+      margin: 2em 0;
+
+      &__link {
+        border-bottom: 1px dotted color-state(red-light);
+        color: inherit;
+        display: block;
+        overflow: hidden;
+        text-align: justify;
+        text-decoration: none;
+
+        &:hover {
+          border-bottom-style: solid;
+        }
+      }
+
+        &__name {
+          @include type-body-large();
+          float: left;
+          text-align: left;
+        }
+
+        &__guest {
+          @include type-nav();
+          float: right;
+          text-align: right;
+
+          @include dimension-set-breakpoints(type, body-large, line-height) {
+            line-height: dimension(type, body-large, line-height);
+          }
+        }
+
+      &__description {
+        @include type-body();
+        @include type-markdown();
+      }
+    }
+}

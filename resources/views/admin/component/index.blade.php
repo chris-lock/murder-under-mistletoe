@@ -22,6 +22,12 @@
                         <th>{{ title_case(str_replace('_', ' ', $column)) }}</th>
                     @endforeach
 
+                    @if ($controller == 'Character')
+                        <th>&nbsp;</th>
+
+                        <th>&nbsp;</th>
+                    @endif
+
                     <th>&nbsp;</th>
                 </tr>
             </thead>
@@ -34,6 +40,26 @@
                         @foreach($columns as $column)
                             <td>{{ $resource->$column }}</td>
                         @endforeach
+
+                        @if ($controller == 'Character')
+                            <td>
+                                <a
+                                    class="btn btn-primary btn-xs pull-right"
+                                    href="{{ mailto_character($resource) }}"
+                                >
+                                    Character
+                                </a>
+                            </td>
+
+                            <td>
+                                <a
+                                    class="btn btn-primary btn-xs pull-right"
+                                    href="{{ mailto_relationships($resource) }}"
+                                >
+                                    Relationships
+                                </a>
+                            </td>
+                        @endif
 
                         <td>
                             <a

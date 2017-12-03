@@ -25,6 +25,10 @@ class CharacterRequest extends FormRequest
     {
         return [
             'guest' => 'required',
+            'email' => 'required|email',
+            'involvement' => 'required|numeric|between:1,3',
+            'notes' => 'required',
+            'costume' => 'required',
             'first_name' => 'required',
             'last_name' => 'required',
             'bio' => 'required',

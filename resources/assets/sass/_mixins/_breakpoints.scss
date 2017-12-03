@@ -1,0 +1,261 @@
+//  ----------------------------------------------------------------------------
+//  media-queries
+//  ----------------------------------------------------------------------------
+
+  //  print()
+  //  ----------------------------------------------------------------------------
+    //  Adds content for print media and the print class
+    @mixin print() {
+      @media print {
+        @content;
+      }
+
+      .print & {
+        @content;
+      }
+    }
+
+  //  webkit-only()
+  //  ----------------------------------------------------------------------------
+    //  Targets webkit browsers only. Useful when styling selects since only
+    //  webkit supports some styling there.
+    @mixin webkit-only() {
+      @media screen and (-webkit-min-device-pixel-ratio: 1) {
+        @content;
+      }
+    }
+
+  //  retina()
+  //  ----------------------------------------------------------------------------
+    //  Targets retina devices.
+    @mixin retina() {
+      @media
+        only screen and (-webkit-min-device-pixel-ratio: 1.2),
+        only screen and (min--moz-device-pixel-ratio: 1.2),
+        only screen and (-o-min-device-pixel-ratio: 1.2/1),
+        only screen and (min-device-pixel-ratio: 1.2),
+        only screen and (min-resolution: 1.2dppx),
+        only screen and (min-resolution: 115.2dpi) {
+        @content;
+      }
+    }
+
+//  ----------------------------------------------------------------------------
+//  breakpoints
+//  ----------------------------------------------------------------------------
+
+
+  //  override-breakpoints()
+  //  ----------------------------------------------------------------------------
+    // This should rarely be used. It creates an order dependency in breakpoint
+    // declaration
+    @mixin override-breakpoints($should-override: true) {
+      $previous-override-breakpoints: $override-breakpoints;
+      $override-breakpoints: $should-override !global;
+
+      @content;
+
+      $override-breakpoints: $previous-override-breakpoints !global;
+    }
+
+  //  breakpoint()
+  //  ----------------------------------------------------------------------------
+    //  Useful for maintaining your breakpoints in a single location. Reset
+    //  breakpoint specific variables inside each conditional and include the mixins files at the top of each file since SASS does not currently have variable scope.
+    @mixin breakpoint($breakpoint-names...) {
+      @if ($override-breakpoints) {
+        @content;
+      } @else {
+        @each $breakpoint-name in $breakpoint-names {
+          @if (map-has-key($breakpoints, $breakpoint-name)) {
+            $previous-breakpoint: $current-breakpoint;
+            $current-breakpoint: $breakpoint-name !global;
+            $breakpoint: map-get($breakpoints, $breakpoint-name);
+
+            @if (map-has-key($breakpoint, query)) {
+              @media screen and #{inspect(map-get($breakpoint, query))} {
+                @content;
+              }
+
+              @if (map-get($breakpoint, is-print)) {
+                @media print {
+                  @content;
+                }
+              }
+            } @else {
+              @content;
+            }
+
+            $current-breakpoint: $previous-breakpoint !global;
+          }
+        }
+      }
+    }
+
+  //  all-breakpoints()
+  //  ----------------------------------------------------------------------------
+    @mixin all-breakpoints() {
+      @include breakpoint(map-keys($breakpoints)...) {
+        @content;
+      }
+    }
+
+  //  breakpoints-attrs()
+  //  ----------------------------------------------------------------------------
+    @mixin breakpoints-attrs($breakpoint-attr, $css-attrs, $function, $multiplier: 1, $addend: 0) {
+      @if (not($current-breakpoint)) {
+        @each $breakpoint-name, $breakpoint-attrs in $breakpoints {
+          @include breakpoint($breakpoint-name) {
+            @include breakpoint-attrs(
+              $breakpoint-attrs,
+              $breakpoint-attr,
+              $css-attrs,
+              $function,
+              $multiplier,
+              $addend
+            );
+          }
+        }
+      } @else {
+        @include breakpoint-attrs(
+          map-get($breakpoints, $current-breakpoint),
+          $breakpoint-attr,
+          $css-attrs,
+          $function,
+          $multiplier,
+          $addend
+        );
+      }
+    }
+
+  //  breakpoint-attrs()
+  //  ----------------------------------------------------------------------------
+    @mixin breakpoint-attrs($breakpoint-attrs, $breakpoint-attr, $css-attrs, $function, $multiplier: 1, $addend: 0) {
+      @if (map-has-key($breakpoint-attrs, $breakpoint-attr)) {
+        @each $css-attr in $css-attrs {
+          #{$css-attr}: call($function, map-get($breakpoint-attrs, $breakpoint-attr)) * $multiplier + $addend;
+        }
+      }
+    }
+
+  //  breakpoint-attr()
+  //  ----------------------------------------------------------------------------
+    @function breakpoint-attr($breakpoint-name, $breakpoint-attr) {
+      $breakpoint: map-get($breakpoints, $breakpoint-name);
+
+      @return map-get($breakpoint, $breakpoint-attr);
+    }
+
+  //  breakpoint-edge()
+  //  ----------------------------------------------------------------------------
+    @function breakpoint-edge($breakpoint-name) {
+      $breakpoint-query: breakpoint-attr($breakpoint-name, query);
+
+      @if (map-has-key($breakpoint-query, min-width)) {
+        @return map-get($breakpoint-query, min-width);
+      } @else if (map-has-key($breakpoint-query, max-width)) {
+        @return map-get($breakpoint-query, max-width);
+      }
+
+      @return auto;
+    }
+
+  //  breakpoint-width()
+  //  ----------------------------------------------------------------------------
+    @function breakpoint-width($breakpoint-name) {
+      @return breakpoint-attr($breakpoint-name, width);
+    }
+
+  //  breakpoint-width()
+  //  ----------------------------------------------------------------------------
+    @function breakpoint-width($breakpoint-name) {
+      @return breakpoint-attr($breakpoint-name, width);
+    }
+
+  // breakpoints-for-dimension-set()
+  //  ----------------------------------------------------------------------------
+    @mixin dimension-set-breakpoints($dimension-set...) {
+      @each $breakpoint, $value in _resolve-dimension-set-alias($dimension-set) {
+        @include breakpoint($breakpoint) {
+          @content;
+        }
+      }
+    }
+
+  // _dimension()
+  //  ----------------------------------------------------------------------------
+    //  Automatically chooses the correct dimension from a dimension set based on
+    //  the current breakpoint.
+    @function dimension($dimension-set-name-or-set...) {
+      @return dimension-for-breakpoint(
+        if($current-breakpoint, $current-breakpoint, $default-breakpoint),
+        $dimension-set-name-or-set...
+      );
+    }
+
+    // _dimension-for-breakpoint()
+    //  ----------------------------------------------------------------------------
+      //  Gets the breakpoint value from a diemnsion set.
+      @function dimension-for-breakpoint($breakpoint-to-find, $dimension-set-name-or-set...) {
+        $dimension-set: if(
+          type-of(nth($dimension-set-name-or-set, 1)) == map,
+          nth($dimension-set-name-or-set, 1),
+          _resolve-dimension-set-alias($dimension-set-name-or-set)
+        );
+
+        $dimension-default: map-get($dimension-set, $default-breakpoint);
+        $dimension-found: $dimension-default;
+        $previous-breakpoint-query-type: false;
+
+        @if (not($breakpoint-to-find == $default-breakpoint)) {
+          $breakpoint-found: false;
+
+          @each $breakpoint-name, $breakpoint-attrs in $breakpoints {
+            @if (not($breakpoint-found)) {
+              @if (map-has-key($breakpoint-attrs, query)) {
+                $breakpoint-query-type: nth(map-keys(map-get($breakpoint-attrs, query)), 1);
+
+                @if (not($previous-breakpoint-query-type == $breakpoint-query-type)) {
+                  $dimension-found: $dimension-default;
+                }
+
+                $previous-breakpoint-query-type: $breakpoint-query-type;
+              }
+
+              @if ($breakpoint-name == $breakpoint-to-find) {
+                $breakpoint-found: true;
+              }
+
+              @if (map-has-key($dimension-set, $breakpoint-name)) {
+                $dimension-found: map-get($dimension-set, $breakpoint-name);
+              }
+            }
+          }
+        }
+
+        @return _get-dimension-set-alias-value($dimension-found);
+      }
+
+    // _resolve-dimension-set-alias()
+    //  ----------------------------------------------------------------------------
+      @function _resolve-dimension-set-alias($keys) {
+        $result: $dimension-sets;
+
+        @each $key in $keys {
+          $result: _get-dimension-set-alias-value(
+            map-get($result, quote($key))
+          );
+        }
+
+        @return $result;
+      }
+
+    // _get-dimension-set-alias-value()
+    //  ----------------------------------------------------------------------------
+      @function _get-dimension-set-alias-value($value) {
+        @return if(
+          (type-of($value) == map and map-has-key($value, is-alias)),
+          _resolve-dimension-set-alias(map-get($value, alias)),
+          $value
+        );
+      }

@@ -1,3 +1,4 @@
+
 @inject('relationship', 'App\Models\Relationship')
 @extends('admin.component.edit')
 
@@ -34,6 +35,26 @@
     </div>
 
     <div class="form-group">
+        {{ Form::label('email', 'Email') }}
+        {{ Form::email('email', $resource->email, array('class' => 'form-control')) }}
+    </div>
+
+    <div class="form-group">
+        {{ Form::label('involvement', 'Involement') }}
+        {{ Form::number('involvement', $resource->involvement, array('class' => 'form-control')) }}
+    </div>
+
+    <div class="form-group">
+        {{ Form::label('notes', 'Notes') }}
+        {{ Form::text('notes', $resource->notes, array('class' => 'form-control')) }}
+    </div>
+
+    <div class="form-group">
+        {{ Form::label('costume', 'Costume') }}
+        {{ Form::text('costume', $resource->costume, array('class' => 'form-control')) }}
+    </div>
+
+    <div class="form-group">
         {{ Form::label('first_name', 'First Name') }}
         {{ Form::text('first_name', $resource->first_name, array('class' => 'form-control')) }}
     </div>
@@ -60,7 +81,7 @@
     </div>
 
     <div class="form-group">
-        {{ Form::label('story', 'Story') }}
+        {{ Form::label('story', 'Story & Motive') }}
         {{ Form::textarea('story', $resource->story, array(
             'class' => 'form-control',
             'rows' => '3',
@@ -94,8 +115,10 @@
         <div role="tabpanel" class="tab-pane{{ (isset($panel) && $panel == "relationships") ? " active" : "" }}" id="relationships">
             <div class="panel-default">
                 @foreach ($characters as $character)
-                    <div class="panel-heading">
-                        {{ $character->full_name }}
+                    <div class="panel-heading" id="relationship-{{ $character->id }}">
+                        <a href="{{ model_route($character, 'edit') }}">
+                            {{ $character->full_name }} ({{ $character->guest }})
+                        </a>
                     </div>
 
                     <div class="panel-body">
@@ -104,6 +127,8 @@
                                 return $relationship->relationship_id == $character->id;
                             }) ?? new $relationship,
                             'title' => 'Relationship to',
+                            'character_relationship_id' => $resource->id,
+                            'return_id' => $character->id,
                             'character_id' => $resource->id,
                             'relationship_id' => $character->id,
                         ])
@@ -113,6 +138,8 @@
                                 return $perception->character_id == $character->id;
                             }) ?? new $relationship,
                             'title' => 'Perception from',
+                            'character_relationship_id' => $resource->id,
+                            'return_id' => $character->id,
                             'character_id' => $character->id,
                             'relationship_id' => $resource->id,
                         ])

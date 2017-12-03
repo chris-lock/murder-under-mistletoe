@@ -1,20 +1,20 @@
 @inject('instruction', 'App\Models\Instruction')
 
-<div class="panel-heading">
+<div class="panel-heading" id="act-{{ $act->id }}">
     {{ $act->title }}
 </div>
 
 <div class="panel-body">
     @foreach ($act->instructions as $instruction)
         @include('admin.character.instruction', [
-            'resource' => $instruction,
+            'instruction' => $instruction,
             'act_id' => $act->id,
             'character_id' => $character_id,
         ])
     @endforeach
 
     @include('admin.character.instruction', [
-        'resource' => new $instruction,
+        'instruction' => new $instruction,
         'act_id' => $act->id,
         'character_id' => $character_id,
     ])

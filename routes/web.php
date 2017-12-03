@@ -16,7 +16,7 @@ Auth::routes();
 Route::group(array('prefix' => 'admin'), function() {
     Route::get('/', 'Admin\AdminController@index')->name('admin');
     Route::resource('stories', 'Admin\StoryController', ['except' => [
-        'index',
+        'delete',
     ]]);
     Route::resources([
         'acts' => 'Admin\ActController',

@@ -16,3 +16,13 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::resource('characters', 'Api\CharacterController', ['only' => [
+    'show',
+]]);
+Route::resource('characters.instructions', 'Api\CharacterInstructionController', ['only' => [
+    'index',
+]]);
+Route::resource('story', 'Api\StoryController', ['only' => [
+    'index',
+]]);

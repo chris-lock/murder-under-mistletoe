@@ -34,6 +34,22 @@ class Act extends Model
     /**
      * What happens?
      *
+     * @param  Illuminate\Database\Eloquent\Builder $query
+     * @param  ?int $characterId
+     * @return Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWithInstructionsForCharacter(Builder $query, ?int $characterId)
+    {
+        return $query->with(['instructions' => function ($query) use ($characterId) {
+            if ($characterId) {
+                $query->where('character_id', $characterId);
+            }
+        }]);
+    }
+
+    /**
+     * What happens?
+     *
      * @return Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function instructions()

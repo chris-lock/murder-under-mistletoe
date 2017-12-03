@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css?family=Abhaya+Libre:400,800|Oswald:400');
+
+//  ----------------------------------------------------------------------------
+//  _font-family
+//  ----------------------------------------------------------------------------
+
+  //  _font()
+  //  -----------------------------------------------------------------------------
+    @mixin font($size: false, $line-height: false, $weight: false, $style: false) {
+      @if ($size) {
+        font-size: $size;
+      }
+
+      @if ($line-height) {
+        line-height: $line-height;
+      }
+
+      @if ($weight) {
+        font-weight: get-font-weight($weight);
+      }
+
+      @if ($style) {
+        font-style: $style;
+      }
+    }
+
+  //  _serif()
+  //  -----------------------------------------------------------------------------
+    //  For Abhaya Libre
+    @mixin serif($weight: book, $style: normal, $size: false, $line-height: false) {
+      @include font($size, $line-height, get-font-weight($weight), $style);
+      font-family: 'Abhaya Libre', monospace;
+    }
+
+    @function get-font-weight($weight) {
+      $weight-names: (
+        "normal": 400,
+        "book": 400,
+        "medium": 500,
+        "bold": 700,
+        "black": 800,
+        // https://github.com/sass/sass/issues/1922
+        "#000": 800
+      );
+      $weight-name: to-lower-case(inspect($weight));
+
+      @if (map-has-key($weight-names, $weight-name)) {
+        @return map-get($weight-names, $weight-name);
+      }
+
+      @return $weight;
+    }
+
+  //  _sans-serif()
+  //  -----------------------------------------------------------------------------
+    //  For Oswald
+    @mixin sans-serif($weight: book, $style: normal, $size: false, $line-height: false) {
+      @include font($size, $line-height, get-font-weight($weight), $style);
+      font-family: 'Oswald', monospace;
+    }
+
+  //  _monospace()
+  //  -----------------------------------------------------------------------------
+    //  For Courier
+    @mixin monospace($weight: 400, $style: normal, $size: false, $line-height: false) {
+      @include font($size, $line-height, get-font-weight($weight), $style);
+      font-family: 'Courier', monospace;
+    }
+
+//  ----------------------------------------------------------------------------
+//  _helpers
+//  ----------------------------------------------------------------------------
+
+  //  _uppercase()
+  //  ----------------------------------------------------------------------------
+    @mixin uppercase($letter-space: 1px) {
+      letter-spacing: $letter-space;
+      text-transform: uppercase;
+    }

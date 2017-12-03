@@ -1,0 +1,72 @@
+//  ----------------------------------------------------------------------------
+//  Table of Contents (keep up-to-date)
+//  ----------------------------------------------------------------------------
+//
+//  _breakpoints
+//
+//  ----------------------------------------------------------------------------
+
+  $current-breakpoint: false !global;
+  $override-breakpoints: false !global;
+  $max-content-width: 1600px;
+    $deprecated-max-content-width: 1200px;
+  $breakpoint-width-large: $deprecated-max-content-width;
+  $breakpoint-width-x-large: $max-content-width;
+  $breakpoint-width-medium: 1000px;
+  $breakpoint-width-small: 700px;
+  $breakpoint-width-x-small: 320px;
+  $default-breakpoint: large;
+
+//  ----------------------------------------------------------------------------
+//  _breakpoints
+//  ----------------------------------------------------------------------------
+  $breakpoints: (
+    large: (
+      width: $breakpoint-width-large,
+      column: (
+        gutter: 24px,
+        wrapper-margin: 30px
+      )
+    ),
+    x-large: (
+      width: $breakpoint-width-x-large,
+      query: (
+        min-width: $breakpoint-width-x-large
+      ),
+      column: (
+        gutter: 24px,
+        wrapper-margin: 30px
+      )
+    ),
+    medium: (
+      width: $breakpoint-width-medium,
+      query: (
+        max-width: $breakpoint-width-large - 1px
+      ),
+      column: (
+        gutter: 24px,
+        wrapper-margin: 30px
+      )
+    ),
+    small: (
+      width: $breakpoint-width-small,
+      query: (
+        max-width: $breakpoint-width-medium - 1px
+      ),
+      is-print: true,
+      column: (
+        gutter: 16px,
+        wrapper-margin: 20px
+      )
+    ),
+    x-small: (
+      width: $breakpoint-width-x-small,
+      query: (
+        max-width: $breakpoint-width-small - 1px
+      ),
+      column: (
+        gutter: 16px,
+        wrapper-margin: 16px
+      )
+    )
+  );

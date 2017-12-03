@@ -1,0 +1,93 @@
+//  dimension-scale
+//  ----------------------------------------------------------------------------
+  @function dimension-scale($large-dimension, $scales) {
+    $dimension-set: (
+      large: $large-dimension,
+    );
+
+    @each $breakpoint-name, $scale in $scales {
+      $dimension-set: map-merge(
+        $dimension-set,
+        (
+          $breakpoint-name: $large-dimension * $scale,
+        )
+      )
+    }
+
+    @return $dimension-set;
+  }
+
+//  _dimension-alias
+//  ----------------------------------------------------------------------------
+  //  This allows you to make two dimension sets mirror each other. This is used
+  //  in dimension-for-breakpoint, _resolve-dimension-set-alias, and
+  //  _get-dimension-set-alias-value.
+  @function _dimension-alias($alias...) {
+    @return (
+      alias: $alias,
+      is-alias: true,
+    );
+  }
+
+//  _type-dimensions
+//  ----------------------------------------------------------------------------
+  @function _type-dimensions($dimensions) {
+    $font-size: ();
+    $line-height: ();
+
+    @each $breakpoint, $sizes in $dimensions {
+      $font-size: map-merge($font-size, (
+        $breakpoint: nth($sizes, 1),
+      ));
+
+      $line-height: map-merge($line-height, (
+        $breakpoint: nth($sizes, 2),
+      ));
+    }
+
+    @return (
+      font-size: $font-size,
+      line-height: $line-height,
+    );
+  }
+
+//  $type-dimensions
+//  ----------------------------------------------------------------------------
+  $type-dimensions: (
+    headline-1: _type-dimensions((
+      large: (56px, 56px),
+      medium: (46px, 46px),
+      x-small: (32px, 32px),
+    )),
+    eyebrow: _type-dimensions((
+      large: (18px, 18px),
+      medium: (16px, 16px),
+      x-small: (14px, 14px),
+    )),
+    nav: _type-dimensions((
+      large: (14px, 14px),
+      medium: (12px, 12px),
+      x-smal: (11px, 11px),
+    )),
+    body: _type-dimensions((
+      large: (18px, 24px),
+      medium: (16px, 22px),
+      x-small: (14px, 19px),
+    )),
+    body-large: _type-dimensions((
+      large: (22px, 30px),
+      medium: (18px, 24px),
+      x-small: (16px, 22px),
+    )),
+  );
+
+//  $dimension-sets
+//  ----------------------------------------------------------------------------
+  $dimension-sets: (
+    type: $type-dimensions,
+    view: (
+      inset: (
+        large: 20px,
+      ),
+    ),
+  );

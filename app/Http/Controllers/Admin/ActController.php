@@ -93,8 +93,8 @@ class ActController extends AdminController
      * @param  App\Models\Act  $act
      * @return \Illuminate\Http\Response
      */
-    private function editForm(Act $act, string $action) {
-        return View::make('admin.story.edit')->with([
+    private function editForm(Act $act) {
+        return View::make('admin.act.edit')->with([
             'resource' => $act,
         ]);
     }

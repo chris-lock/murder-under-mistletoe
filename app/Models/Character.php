@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Sluggable\SlugOptions;
 
 class Character extends Model
 {
     use HasSlug;
+    use SoftDeletes;
     /**
      * The attributes that are mass assignable.
      *
@@ -16,12 +18,24 @@ class Character extends Model
      */
     protected $fillable = [
         'guest',
+        'email',
+        'involvement',
+        'notes',
+        'costume',
         'first_name',
         'last_name',
         'bio',
         'appearance',
         'story',
         'murder',
+    ];
+     /**
+     * The attributes appended to JSON.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'full_name',
     ];
 
     /**

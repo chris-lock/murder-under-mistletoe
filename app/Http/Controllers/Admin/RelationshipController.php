@@ -16,8 +16,11 @@ class RelationshipController extends AdminController
      */
     public function store(RelationshipRequest $request)
     {
+        Relationship::create($request->all())->character_id;
+
         return $this->redirectToCharacter(
-            Relationship::create($request->all())->character_id
+            $request->input('character_relationship_id'),
+            $request->input('return_id')
         );
     }
 
@@ -30,10 +33,12 @@ class RelationshipController extends AdminController
      */
     public function update(RelationshipRequest $request, int $id)
     {
-        $relationship = Relationship::find($id);
-        $relationship->update($request->all());
+        Relationship::find($id)->update($request->all());
 
-        return $this->redirectToCharacter($relationship->character_id);
+        return $this->redirectToCharacter(
+            $request->input('character_relationship_id'),
+            $request->input('return_id')
+        );
     }
 
     /**
@@ -48,19 +53,25 @@ class RelationshipController extends AdminController
         $character_id = $relationship->character_id;
         $relationship->delete();
 
-        return $this->redirectToCharacter($character_id);
+        return $this->redirectToCharacter(
+            $request->input('character_relationship_id')
+        );
     }
 
     /**
      * Redirect to the character page.
      *
      * @param  int  $id
+     * @param  ?int  $return_id
      * @return \Illuminate\Http\Response
      */
-    private function redirectToCharacter(int $id) {
+    private function redirectToCharacter(int $id, ?int $return_id) {
         return redirect()->route('characters.edit', [
             'character' => $id,
             'panel' => 'relationships',
+            isset($return_id)
+                ? '#relationship-' . $return_id
+                : '',
         ]);
     }
 }

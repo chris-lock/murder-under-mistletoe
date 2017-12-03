@@ -22,8 +22,9 @@ class CharacterController extends AdminController
             'resources' => Character::all(),
             'columns' => [
                 'guest',
-                'first_name',
-                'last_name',
+                'full_name',
+                'involvement',
+                'slug',
             ],
         ]);
     }
@@ -99,25 +100,11 @@ class CharacterController extends AdminController
     private function editForm(Character $character) {
         return View::make('admin.character.edit')->with([
             'resource' => $character,
-            'acts' => $this->acts($character->id),
+            'acts' => Act::withInstructionsForCharacter($character->id)->get(),
             'characters' => Character::all()->where('id', '<>', $character->id),
             'relationships' => $character->relationships(),
             'perceptions' => $character->perceptions(),
             'panel' => request()->query('panel'),
         ]);
-    }
-
-    /**
-     * Get all the acts with instructions for the character.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    private function acts(?int $id) {
-        return Act::with(['instructions' => function ($query) use ($id) {
-            if ($id) {
-                $query->where('character_id', $id);
-            }
-        }])->get();
     }
 }
