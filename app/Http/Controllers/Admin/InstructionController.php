@@ -64,11 +64,11 @@ class InstructionController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    private function redirectToCharacter(int $id, ?int $return_id) {
+    private function redirectToCharacter(int $id, ?int $return_id = null) {
         return redirect()->route('characters.edit', [
             'character' => $id,
             'panel' => 'instructions',
-            isset($return_id)
+            $return_id
                 ? '#act-' . $return_id
                 : '',
         ]);

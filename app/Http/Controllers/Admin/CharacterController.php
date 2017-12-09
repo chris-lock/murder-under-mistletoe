@@ -19,11 +19,14 @@ class CharacterController extends AdminController
     {
         return View::make('admin.component.index')->with([
             'controller' => 'Character',
-            'resources' => Character::all(),
+            'resources' => Character::with(['relationships', 'relationships.character'])
+                ->orderBy('involvement', 'desc')
+                ->get(),
             'columns' => [
                 'guest',
                 'full_name',
                 'involvement',
+                'instructions_and_relationships',
                 'slug',
             ],
         ]);

@@ -7,6 +7,13 @@ use App\Models\Character;
 
 class CharacterController extends Controller
 {
+    public function index()
+    {
+        return Character::with(['relationships', 'relationships.character'])
+            ->orderBy('involvement', 'desc')
+            ->get();
+    }
+
     public function show(string $slug)
     {
         return Character::with(['relationships', 'relationships.character'])

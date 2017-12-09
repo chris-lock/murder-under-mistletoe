@@ -18,6 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::resource('characters', 'Api\CharacterController', ['only' => [
+    'index',
     'show',
 ]]);
 Route::resource('characters.instructions', 'Api\CharacterInstructionController', ['only' => [

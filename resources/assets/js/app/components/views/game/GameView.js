@@ -8,6 +8,7 @@ import ResetView from './ResetView';
 import WelcomeView from './WelcomeView';
 import CharacterView from './CharacterView';
 import ActView from './ActView';
+import EveryoneView from './EveryoneView';
 
 export default class GameView
 extends RootView {
@@ -25,6 +26,7 @@ extends RootView {
       <Route path="/role" exact component={CharacterView} />,
       <Route path="/characters/:characterSlug" component={CharacterView} />,
       <Route path="/acts" component={ActView} />,
+      <Route path="/everyone" component={EveryoneView} />,
     ];
   }
 }

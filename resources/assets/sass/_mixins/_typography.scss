@@ -74,12 +74,8 @@
 //  type-section-title()
 //  ----------------------------------------------------------------------------
   @mixin type-section-title($color: color-state(red-light)) {
-    @include sans-serif(medium, normal);
-    @include type-sizes-for-dimension-set(nav);
-    @include uppercase(2px);
     display: block;
     color: $color;
-    margin-bottom: 1em;
     overflow: hidden;
 
     @include dimension-set-breakpoints(view, inset) {
@@ -88,6 +84,11 @@
     }
 
     &__inner {
+      @include sans-serif(medium, normal);
+      @include type-sizes-for-dimension-set(nav);
+      @include uppercase(2px);
+      display: inline-block;
+      margin-bottom: 1em;
       position: relative;
 
       @include dimension-set-breakpoints(view, inset) {

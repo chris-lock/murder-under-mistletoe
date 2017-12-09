@@ -29,6 +29,8 @@
 @endif
 
 @section('form')
+    {{ Form::hidden('murder', 'murder') }}
+
     <div class="form-group">
         {{ Form::label('guest', 'Guest') }}
         {{ Form::text('guest', $resource->guest, array('class' => 'form-control')) }}
@@ -83,14 +85,6 @@
     <div class="form-group">
         {{ Form::label('story', 'Story & Motive') }}
         {{ Form::textarea('story', $resource->story, array(
-            'class' => 'form-control',
-            'rows' => '3',
-        )) }}
-    </div>
-
-    <div class="form-group">
-        {{ Form::label('murder', 'Murder') }}
-        {{ Form::textarea('murder', $resource->murder, array(
             'class' => 'form-control',
             'rows' => '3',
         )) }}

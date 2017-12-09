@@ -8,6 +8,7 @@ class GameStore {
     characters: {},
   };
   _listeners = [];
+  _showEveryone = false;
 
   constructor() {
     if (this.roleSlug) {
@@ -48,6 +49,27 @@ class GameStore {
 
   getRole() {
     return this._data.role;
+  }
+
+  loadCharacters() {
+    if (this._isNotLoadingOrLoaded('characters', this._data.characters)) {
+      this._api
+        .request('characters')
+        .get('/api/characters')
+        .then(this._thenBroadcast((characters) => {
+          this._data.characters = characters;
+          this._showEveryone = true;
+        }))
+        .catch(this._broadcast);
+    }
+  }
+
+  getCharacters() {
+    return this._data.characters;
+  }
+
+  showEveryone() {
+    return this._showEveryone;
   }
 
   loadCharacter(characterSlug) {

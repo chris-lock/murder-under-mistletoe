@@ -57,22 +57,31 @@ extends SubView {
   }
 
   _renderContent() {
-    return (this.state.data.some(this._actHasStarted))
-      ? this.state.data.map(this._renderAct)
-      : this.state.data.map(this._renderSchedule);
+    return this.state.data.map(this._renderStartedActs);
+  }
+
+  _renderStartedActs(act, index) {
+    return this._actHasStarted(act)
+      ? this._renderAct(act, index)
+      : this._renderSchedule(act, index);
   }
 
   _renderAct(act, index) {
     return (
       <article className={this.bem.el('act').conditional(this._actIsActive(act)).state('active')}>
-        <h1>
-          <span>{this._actEyebrow(index)}</span>
+        <h1 className={this.bem.el('act', 'title')}>
+          <span className={this.bem.el('act', 'title', 'inner')}>
+            {this._actEyebrow(index)}
+          </span>
 
-          {act.title}
+          <span className={this.bem.el('act', 'title', 'copy')}>
+            {act.title}
+          </span>
         </h1>
 
         <ul
           children={act.instructions.map(this._renderInstruction.bind(this, act))}
+          className={this.bem.el('act', 'instructions')}
         />
       </article>
     );
@@ -90,27 +99,19 @@ extends SubView {
   }
 
   _actHasStarted(act) {
-    return act.begins <= this.state.time;
+    return (
+      act.begins <= this.state.time
+      || GameStore.showEveryone()
+    );
   }
 
   _renderInstruction(act, instruction) {
     return (
-      <li>
-        <div
-          {...this.markdown(instruction.copy)}
-        />
-
-        <p>{instruction.value}</p>
-
-        {this._renderInstructionForm(act, instruction.id)}
-      </li>
+      <li
+        className={this.bem.el('act', 'instruction')}
+        {...this.markdown(instruction.copy)}
+      />
     );
-  }
-
-  _renderInstructionForm(act, instructionId) {
-    if (this._actHasStarted(act)) {
-      // return <p>form</p>;
-    }
   }
 
   _renderSchedule(act, index) {

@@ -620,6 +620,14 @@ html {
 }
 
 .view__section__title {
+  display: block;
+  color: #FFBFB4;
+  overflow: hidden;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.view__section__title__inner {
   font-weight: 500;
   font-style: normal;
   font-family: 'Oswald', monospace;
@@ -627,25 +635,18 @@ html {
   line-height: 14px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  display: block;
-  color: #FFBFB4;
+  display: inline-block;
   margin-bottom: 1em;
-  overflow: hidden;
-  margin-left: 20px;
-  margin-right: 20px;
-}
-
-@media screen and (max-width: 1199px) {
-  .view__section__title {
-    font-size: 12px;
-    line-height: 12px;
-  }
-}
-
-.view__section__title__inner {
   position: relative;
   padding-left: 20px;
   padding-right: 20px;
+}
+
+@media screen and (max-width: 1199px) {
+  .view__section__title__inner {
+    font-size: 12px;
+    line-height: 12px;
+  }
 }
 
 .view__section__title__inner:before,
@@ -775,6 +776,14 @@ html {
 }
 
 .view__schedule__act {
+  display: block;
+  color: #FFBFB4;
+  overflow: hidden;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.view__schedule__act__inner {
   font-weight: 500;
   font-style: normal;
   font-family: 'Oswald', monospace;
@@ -782,25 +791,18 @@ html {
   line-height: 14px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  display: block;
-  color: #FFBFB4;
+  display: inline-block;
   margin-bottom: 1em;
-  overflow: hidden;
-  margin-left: 20px;
-  margin-right: 20px;
-}
-
-@media screen and (max-width: 1199px) {
-  .view__schedule__act {
-    font-size: 12px;
-    line-height: 12px;
-  }
-}
-
-.view__schedule__act__inner {
   position: relative;
   padding-left: 20px;
   padding-right: 20px;
+}
+
+@media screen and (max-width: 1199px) {
+  .view__schedule__act__inner {
+    font-size: 12px;
+    line-height: 12px;
+  }
 }
 
 .view__schedule__act__inner:before,
@@ -847,6 +849,135 @@ html {
     font-size: 16px;
     line-height: 22px;
   }
+}
+
+.view__act {
+  margin-bottom: 40px;
+}
+
+.view__act__title {
+  display: block;
+  color: #FFBFB4;
+  overflow: hidden;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.view__act__title__inner {
+  font-weight: 500;
+  font-style: normal;
+  font-family: 'Oswald', monospace;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 1em;
+  position: relative;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+@media screen and (max-width: 1199px) {
+  .view__act__title__inner {
+    font-size: 12px;
+    line-height: 12px;
+  }
+}
+
+.view__act__title__inner:before,
+.view__act__title__inner:after {
+  content: "";
+  display: block;
+  position: absolute;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  position: absolute;
+  top: 50%;
+  border-top: 1px solid #FFBFB4;
+  width: 20000%;
+}
+
+.view__act__title__inner:before {
+  right: 100%;
+}
+
+.view__act__title__inner:after {
+  left: 100%;
+}
+
+.view__act__title__copy {
+  font-weight: 500;
+  font-style: normal;
+  font-family: 'Abhaya Libre', monospace;
+  font-size: 22px;
+  line-height: 30px;
+  color: #FFBFB4;
+  text-align: center;
+  display: block;
+}
+
+@media screen and (max-width: 1199px) {
+  .view__act__title__copy {
+    font-size: 18px;
+    line-height: 24px;
+  }
+}
+
+@media screen and (max-width: 699px) {
+  .view__act__title__copy {
+    font-size: 16px;
+    line-height: 22px;
+  }
+}
+
+.view__act__instruction {
+  font-weight: 500;
+  font-style: normal;
+  font-family: 'Abhaya Libre', monospace;
+  font-size: 18px;
+  line-height: 24px;
+  color: #FFBFB4;
+  text-align: center;
+  border-top: 1px dotted #FFBFB4;
+}
+
+@media screen and (max-width: 1199px) {
+  .view__act__instruction {
+    font-size: 16px;
+    line-height: 22px;
+  }
+}
+
+@media screen and (max-width: 699px) {
+  .view__act__instruction {
+    font-size: 14px;
+    line-height: 19px;
+  }
+}
+
+.view__act__instruction p {
+  margin: 1em 0;
+}
+
+.view__act__instruction strong {
+  font-weight: 800;
+}
+
+.view__act__instruction i,
+.view__act__instruction em {
+  font-style: italic;
+}
+
+.view__act__instruction a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.view__act__instruction a:hover {
+  text-decoration: none;
 }
 
 .view__relationship {

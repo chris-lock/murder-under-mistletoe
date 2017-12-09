@@ -6,17 +6,16 @@
     @component('admin.component.form.edit', [
         'resource' => $instruction,
     ])
-        {{ Form::hidden('act_id', $act_id, array('class' => 'form-control')) }}
-        {{ Form::hidden('character_id', $character_id, array('class' => 'form-control')) }}
+        {{ Form::hidden('act_id', $act_id) }}
+        {{ Form::hidden('character_id', $character_id) }}
+        {{ Form::hidden('value', '10') }}
 
         <div class="form-group">
             {{ Form::label('copy', 'Copy') }}
-            {{ Form::text('copy', $instruction->copy, array('class' => 'form-control')) }}
-        </div>
-
-        <div class="form-group">
-            {{ Form::label('value', 'Value') }}
-            {{ Form::number('value', $instruction->value, array('class' => 'form-control')) }}
+            {{ Form::textarea('copy', $instruction->copy, array(
+                'class' => 'form-control',
+                'rows' => '3',
+            )) }}
         </div>
     @endcomponent
 </div>

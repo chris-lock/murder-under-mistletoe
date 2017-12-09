@@ -295,6 +295,32 @@ html {
       }
     }
 
+    &__act {
+      @include dimension-set-breakpoints(view, inset) {
+        margin-bottom: dimension(view, inset) * 2;
+      }
+
+      &__title {
+        @include type-section-title(color-state(red-light));
+
+        @include dimension-set-breakpoints(view, inset) {
+          margin-bottom: dimension(view, inset);
+          margin-top: dimension(view, inset);
+        }
+
+        &__copy {
+          @include type-body-large();
+          display: block;
+        }
+      }
+
+      &__instruction {
+        @include type-body();
+        @include type-markdown();
+        border-top: 1px dotted color-state(red-light);
+      }
+    }
+
     &__relationship {
       margin: 2em 0;
 

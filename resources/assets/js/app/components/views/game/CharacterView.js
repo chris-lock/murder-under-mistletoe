@@ -28,7 +28,10 @@ extends View {
   }
 
   _isRole() {
-    return this.state.data.slug === GameStore.roleSlug;
+    return (
+      this.state.data.slug === GameStore.roleSlug
+      || GameStore.showEveryone()
+    );
   }
 
   _title() {

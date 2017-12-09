@@ -3832,6 +3832,9 @@ var GameStore = function () {
     this.loadRole = this.loadRole.bind(this);
     this._isNotLoadingOrLoaded = this._isNotLoadingOrLoaded.bind(this);
     this.getRole = this.getRole.bind(this);
+    this.loadCharacters = this.loadCharacters.bind(this);
+    this.getCharacters = this.getCharacters.bind(this);
+    this.showEveryone = this.showEveryone.bind(this);
     this.loadCharacter = this.loadCharacter.bind(this);
     this.getCharacter = this.getCharacter.bind(this);
     this.loadActs = this.loadActs.bind(this);
@@ -3849,6 +3852,7 @@ var GameStore = function () {
       characters: {}
     };
     this._listeners = [];
+    this._showEveryone = false;
 
     if (this.roleSlug) {
       this.loadRole(this.roleSlug);
@@ -3898,16 +3902,38 @@ var GameStore = function () {
       return this._data.role;
     }
   }, {
+    key: 'loadCharacters',
+    value: function loadCharacters() {
+      var _this = this;
+
+      if (this._isNotLoadingOrLoaded('characters', this._data.characters)) {
+        this._api.request('characters').get('/api/characters').then(this._thenBroadcast(function (characters) {
+          _this._data.characters = characters;
+          _this._showEveryone = true;
+        })).catch(this._broadcast);
+      }
+    }
+  }, {
+    key: 'getCharacters',
+    value: function getCharacters() {
+      return this._data.characters;
+    }
+  }, {
+    key: 'showEveryone',
+    value: function showEveryone() {
+      return this._showEveryone;
+    }
+  }, {
     key: 'loadCharacter',
     value: function loadCharacter(characterSlug) {
-      var _this = this;
+      var _this2 = this;
 
       if (this._isNotLoadingOrLoaded(characterSlug, this._data.characters)) {
         this._api.request(characterSlug).get('/api/characters/' + characterSlug).then(this._thenBroadcast(function (character) {
-          _this._data.characters[characterSlug] = character;
+          _this2._data.characters[characterSlug] = character;
 
-          if (characterSlug === _this.roleSlug) {
-            _this._data.role = character;
+          if (characterSlug === _this2.roleSlug) {
+            _this2._data.role = character;
           }
         })).catch(this._broadcast);
       }
@@ -3920,13 +3946,13 @@ var GameStore = function () {
   }, {
     key: 'loadActs',
     value: function loadActs() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.loadStory(function (story) {
         var storyBegins = story.begins.replace(/-/g, '/');
 
-        _this2._loadGenericData('acts', '/api/characters/' + _this2.roleSlug + '/instructions', function (acts) {
-          return _this2._data.acts || acts.map(function (act) {
+        _this3._loadGenericData('acts', '/api/characters/' + _this3.roleSlug + '/instructions', function (acts) {
+          return _this3._data.acts || acts.map(function (act) {
             return _extends({}, act, {
               begins: new Date(storyBegins + ' ' + act.begins).getTime()
             });
@@ -3939,11 +3965,11 @@ var GameStore = function () {
   }, {
     key: '_loadGenericData',
     value: function _loadGenericData(name, url, callback) {
-      var _this3 = this;
+      var _this4 = this;
 
       if (this._isNotLoadingOrLoaded(name, this.data, callback)) {
         this._api.request(name).get(url).then(callback).then(this._thenBroadcast(function (data) {
-          return _this3._data[name] = data;
+          return _this4._data[name] = data;
         })).catch(this._broadcast);
       }
     }
@@ -3965,12 +3991,12 @@ var GameStore = function () {
   }, {
     key: '_thenBroadcast',
     value: function _thenBroadcast(method) {
-      var _this4 = this;
+      var _this5 = this;
 
       return function () {
         method.apply(undefined, arguments);
 
-        _this4._broadcast();
+        _this5._broadcast();
       };
     }
   }, {
@@ -7690,6 +7716,7 @@ var View = function (_Component) {
   _createClass(View, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
+      window.scrollTo(0, 0);
       _GameStore2.default.subscribe(this.onGameStoreUpdate);
 
       if (!this._initialData()) {
@@ -7699,7 +7726,7 @@ var View = function (_Component) {
   }, {
     key: 'onGameStoreUpdate',
     value: function onGameStoreUpdate(data) {
-      if (!_GameStore2.default.getRole()) {
+      if (!_GameStore2.default.getRole() && !_GameStore2.default.showEveryone()) {
         this.setState({
           data: {
             error: true
@@ -27406,6 +27433,10 @@ var _ActView = __webpack_require__(287);
 
 var _ActView2 = _interopRequireDefault(_ActView);
 
+var _EveryoneView = __webpack_require__(302);
+
+var _EveryoneView2 = _interopRequireDefault(_EveryoneView);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
@@ -27436,7 +27467,7 @@ var GameView = function (_RootView) {
   _createClass(GameView, [{
     key: '_renderViews',
     value: function _renderViews() {
-      return [_react2.default.createElement(_reactRouterDom.Route, { path: '/', exact: true, component: _StoryView2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/reset/:characterSlug', exact: true, component: _ResetView2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/welcome/:characterSlug', component: _WelcomeView2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/role', exact: true, component: _CharacterView2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/characters/:characterSlug', component: _CharacterView2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/acts', component: _ActView2.default })];
+      return [_react2.default.createElement(_reactRouterDom.Route, { path: '/', exact: true, component: _StoryView2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/reset/:characterSlug', exact: true, component: _ResetView2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/welcome/:characterSlug', component: _WelcomeView2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/role', exact: true, component: _CharacterView2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/characters/:characterSlug', component: _CharacterView2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/acts', component: _ActView2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/everyone', component: _EveryoneView2.default })];
     }
   }]);
 
@@ -31055,7 +31086,7 @@ var CharacterView = function (_View) {
   }, {
     key: '_isRole',
     value: function _isRole() {
-      return this.state.data.slug === _GameStore2.default.roleSlug;
+      return this.state.data.slug === _GameStore2.default.roleSlug || _GameStore2.default.showEveryone();
     }
   }, {
     key: '_title',
@@ -31152,6 +31183,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
@@ -31192,7 +31225,7 @@ var ActView = function (_SubView) {
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_temp2 = (_this = _possibleConstructorReturn(this, (_ref = ActView.__proto__ || Object.getPrototypeOf(ActView)).call.apply(_ref, [this].concat(args))), _this), _this._setCurrentStateTime = _this._setCurrentStateTime.bind(_this), _this._initialData = _this._initialData.bind(_this), _this.onGameStoreUpdate = _this.onGameStoreUpdate.bind(_this), _this._eyebrow = _this._eyebrow.bind(_this), _this._title = _this._title.bind(_this), _this._renderContent = _this._renderContent.bind(_this), _this._renderAct = _this._renderAct.bind(_this), _this._actEyebrow = _this._actEyebrow.bind(_this), _this._actIsActive = _this._actIsActive.bind(_this), _this._actHasStarted = _this._actHasStarted.bind(_this), _this._renderInstruction = _this._renderInstruction.bind(_this), _this._renderInstructionForm = _this._renderInstructionForm.bind(_this), _this._renderSchedule = _this._renderSchedule.bind(_this), _this._actStartTime = _this._actStartTime.bind(_this), _temp2), _this.state = _this._setCurrentStateTime(), _this._timeInterval = null, _temp), _possibleConstructorReturn(_this, _ret);
+    return _ret = (_temp = (_temp2 = (_this = _possibleConstructorReturn(this, (_ref = ActView.__proto__ || Object.getPrototypeOf(ActView)).call.apply(_ref, [this].concat(args))), _this), _this._setCurrentStateTime = _this._setCurrentStateTime.bind(_this), _this._initialData = _this._initialData.bind(_this), _this.onGameStoreUpdate = _this.onGameStoreUpdate.bind(_this), _this._eyebrow = _this._eyebrow.bind(_this), _this._title = _this._title.bind(_this), _this._renderContent = _this._renderContent.bind(_this), _this._renderStartedActs = _this._renderStartedActs.bind(_this), _this._renderAct = _this._renderAct.bind(_this), _this._actEyebrow = _this._actEyebrow.bind(_this), _this._actIsActive = _this._actIsActive.bind(_this), _this._actHasStarted = _this._actHasStarted.bind(_this), _this._renderInstruction = _this._renderInstruction.bind(_this), _this._renderSchedule = _this._renderSchedule.bind(_this), _this._actStartTime = _this._actStartTime.bind(_this), _temp2), _this.state = _this._setCurrentStateTime(), _this._timeInterval = null, _temp), _possibleConstructorReturn(_this, _ret);
   }
 
   _createClass(ActView, [{
@@ -31255,7 +31288,12 @@ var ActView = function (_SubView) {
   }, {
     key: '_renderContent',
     value: function _renderContent() {
-      return this.state.data.some(this._actHasStarted) ? this.state.data.map(this._renderAct) : this.state.data.map(this._renderSchedule);
+      return this.state.data.map(this._renderStartedActs);
+    }
+  }, {
+    key: '_renderStartedActs',
+    value: function _renderStartedActs(act, index) {
+      return this._actHasStarted(act) ? this._renderAct(act, index) : this._renderSchedule(act, index);
     }
   }, {
     key: '_renderAct',
@@ -31265,16 +31303,21 @@ var ActView = function (_SubView) {
         { className: this.bem.el('act').conditional(this._actIsActive(act)).state('active') },
         _react2.default.createElement(
           'h1',
-          null,
+          { className: this.bem.el('act', 'title') },
           _react2.default.createElement(
             'span',
-            null,
+            { className: this.bem.el('act', 'title', 'inner') },
             this._actEyebrow(index)
           ),
-          act.title
+          _react2.default.createElement(
+            'span',
+            { className: this.bem.el('act', 'title', 'copy') },
+            act.title
+          )
         ),
         _react2.default.createElement('ul', {
-          children: act.instructions.map(this._renderInstruction.bind(this, act))
+          children: act.instructions.map(this._renderInstruction.bind(this, act)),
+          className: this.bem.el('act', 'instructions')
         })
       );
     }
@@ -31293,29 +31336,14 @@ var ActView = function (_SubView) {
   }, {
     key: '_actHasStarted',
     value: function _actHasStarted(act) {
-      return act.begins <= this.state.time;
+      return act.begins <= this.state.time || _GameStore2.default.showEveryone();
     }
   }, {
     key: '_renderInstruction',
     value: function _renderInstruction(act, instruction) {
-      return _react2.default.createElement(
-        'li',
-        null,
-        _react2.default.createElement('div', this.markdown(instruction.copy)),
-        _react2.default.createElement(
-          'p',
-          null,
-          instruction.value
-        ),
-        this._renderInstructionForm(act, instruction.id)
-      );
-    }
-  }, {
-    key: '_renderInstructionForm',
-    value: function _renderInstructionForm(act, instructionId) {
-      if (this._actHasStarted(act)) {
-        // return <p>form</p>;
-      }
+      return _react2.default.createElement('li', _extends({
+        className: this.bem.el('act', 'instruction')
+      }, this.markdown(instruction.copy)));
     }
   }, {
     key: '_renderSchedule',
@@ -31513,6 +31541,141 @@ var PointsView = function (_SubView) {
 }(_SubView3.default);
 
 exports.default = PointsView;
+
+/***/ }),
+/* 291 */,
+/* 292 */,
+/* 293 */,
+/* 294 */,
+/* 295 */,
+/* 296 */,
+/* 297 */,
+/* 298 */,
+/* 299 */,
+/* 300 */,
+/* 301 */,
+/* 302 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _react = __webpack_require__(3);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _View2 = __webpack_require__(68);
+
+var _View3 = _interopRequireDefault(_View2);
+
+var _GameStore = __webpack_require__(32);
+
+var _GameStore2 = _interopRequireDefault(_GameStore);
+
+var _reactRouterDom = __webpack_require__(25);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+
+var EveryoneView = function (_View) {
+  _inherits(EveryoneView, _View);
+
+  function EveryoneView() {
+    var _ref;
+
+    var _temp, _this, _ret;
+
+    _classCallCheck(this, EveryoneView);
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = EveryoneView.__proto__ || Object.getPrototypeOf(EveryoneView)).call.apply(_ref, [this].concat(args))), _this), _this._initialData = _this._initialData.bind(_this), _this.onGameStoreUpdate = _this.onGameStoreUpdate.bind(_this), _this._eyebrow = _this._eyebrow.bind(_this), _this._title = _this._title.bind(_this), _this._renderContent = _this._renderContent.bind(_this), _this._renderRelationship = _this._renderRelationship.bind(_this), _this._guestWithLastInitial = _this._guestWithLastInitial.bind(_this), _temp), _possibleConstructorReturn(_this, _ret);
+  }
+
+  _createClass(EveryoneView, [{
+    key: '_initialData',
+    value: function _initialData() {
+      return !_GameStore2.default.loadCharacters() && !_GameStore2.default.clearRole();
+    }
+  }, {
+    key: 'onGameStoreUpdate',
+    value: function onGameStoreUpdate() {
+      _get(EveryoneView.prototype.__proto__ || Object.getPrototypeOf(EveryoneView.prototype), 'onGameStoreUpdate', this).call(this, _GameStore2.default.getCharacters());
+    }
+  }, {
+    key: '_eyebrow',
+    value: function _eyebrow() {
+      return 'This is';
+    }
+  }, {
+    key: '_title',
+    value: function _title() {
+      return 'Everyone';
+    }
+  }, {
+    key: '_renderContent',
+    value: function _renderContent() {
+      return this.state.data.map(this._renderRelationship);
+    }
+  }, {
+    key: '_renderRelationship',
+    value: function _renderRelationship(character) {
+      return _react2.default.createElement(
+        'article',
+        { className: this.bem.el('relationship') },
+        _react2.default.createElement(
+          _reactRouterDom.Link,
+          {
+            className: this.bem.el('relationship', 'link'),
+            to: '/reset/' + character.slug
+          },
+          _react2.default.createElement(
+            'h1',
+            { className: this.bem.el('relationship', 'name') },
+            character.involvement,
+            '. ',
+            character.full_name
+          ),
+          _react2.default.createElement(
+            'h2',
+            { className: this.bem.el('relationship', 'guest') },
+            this._guestWithLastInitial(character.guest)
+          )
+        )
+      );
+    }
+  }, {
+    key: '_guestWithLastInitial',
+    value: function _guestWithLastInitial(name) {
+      var names = name.split(' ');
+
+      names[names.length - 1] = names[names.length - 1][0] + '.';
+
+      return names.join(' ');
+    }
+  }]);
+
+  return EveryoneView;
+}(_View3.default);
+
+exports.default = EveryoneView;
 
 /***/ })
 /******/ ]);

@@ -12,6 +12,7 @@ extends Component {
   state = {};
 
   componentDidMount() {
+    window.scrollTo(0, 0);
     GameStore.subscribe(this.onGameStoreUpdate);
 
     if (!this._initialData()) {
@@ -20,7 +21,7 @@ extends Component {
   }
 
   onGameStoreUpdate(data) {
-    if (!GameStore.getRole()) {
+    if (!GameStore.getRole() && !GameStore.showEveryone()) {
       this.setState({
         data: {
           error: true,

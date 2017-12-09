@@ -60,6 +60,11 @@ class Character extends Model
         return "{$this->first_name} {$this->last_name}";
     }
 
+    public function getInstructionsAndRelationshipsAttribute()
+    {
+        return "{$this->instructions()->distinct()->count('act_id')}-{$this->relationships()->count()}";
+    }
+
     /**
      * Who you know?
      *
